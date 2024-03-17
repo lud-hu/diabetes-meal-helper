@@ -1,3 +1,19 @@
 # Diabetes Meal Helper
 
-todo
+description: tbd
+
+## Setup for local development
+
+Make sure to have node and npm installed.
+For starting the firebase emulator locally, you also need the cli: https://firebase.google.com/docs/cli
+
+```bash
+# install all dependencies
+$ npm install
+
+# startup backend (firebase firestore emulator)
+$ npm run emulator
+
+# startup frontend
+$ npm run dev
+```
