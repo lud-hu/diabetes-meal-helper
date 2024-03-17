@@ -1,23 +1,33 @@
-import { doc, getDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
 import "./App.css";
-import { createCollection, db } from "./firebase";
+import Header from "./components/molecules/Header";
+import Configuration from "./pages/ConfigureMeal";
+import IntakeMeal from "./pages/intakeMeal";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
+const router = createBrowserRouter([
+    {
+        path: "/konfigurieren",
+        element: <Configuration />,
+    },
+    {
+        path: "/einnehmen",
+        element: <IntakeMeal />,
+    },
+    {
+        path: "/",
+        element: <IntakeMeal />,
+    },
+]);
 
 function App() {
-    const [text, setText] = useState("");
-    useEffect(() => {
-        getTextFromDb();
-    }, []);
-
-    const getTextFromDb = async () => {
-        const collection = createCollection<{ text: string }>(db, "test");
-        const document = await getDoc(doc(collection, "rWlIDX8rqB315KpVs2hW"));
-        if (document.exists()) {
-            setText(document.data().text);
-        }
-    };
-
-    return <h1>{text}</h1>;
+    return (
+        <>
+            <Header />
+            <div className="p-8">
+                <RouterProvider router={router} />
+            </div>
+        </>
+    );
 }
 
 export default App;

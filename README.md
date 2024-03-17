@@ -17,3 +17,5 @@ $ npm run emulator
 # startup frontend
 $ npm run dev
 ```
+
+Then, go to `http://localhost:5173/konfigurieren` to configure today's meal and to `http://localhost:5173/einnehmen` to log the intake of the meal.
