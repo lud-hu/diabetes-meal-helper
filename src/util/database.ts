@@ -44,7 +44,7 @@ export const getMealForToday = async (db: Firestore) => {
     );
 
     if (finalDocs.length > 1) return Promise.reject("Ohje... Zu viel Mahlzeiten!");
-    else if (finalDocs.length == 0) return Promise.reject("Ohje... Keine Mahlzeiten gefunden!");
+    if (finalDocs.length == 0) return Promise.reject("Ohje... Keine Mahlzeiten gefunden!");
 
     return finalDocs[0];
 };
