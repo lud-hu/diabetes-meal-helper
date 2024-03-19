@@ -9,6 +9,7 @@ import {
   getMealForToday,
 } from "../util/database";
 import Heading from "../components/molecules/Heading";
+import LoadingSpinner from "../components/molecules/LoadingSpinner";
 
 const emptyMealComponent = {
   name: undefined,
@@ -22,7 +23,7 @@ function Configuration() {
     preMealBolus: 0,
     date: new Date(),
   });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     getTodaysMeal();
@@ -46,11 +47,11 @@ function Configuration() {
   const saveMealToDb = async (updatedMeal: Meal) => {
     setIsLoading(true);
     try {
-      createOrUpdateMeal(db, {
+      await createOrUpdateMeal(db, {
         ...updatedMeal,
         // Filter out placeholder compontent if present:
         mealComponents: updatedMeal.mealComponents.filter(
-          (c) => !!c.name && !!c.amount && !!c.carbsPerPiece
+          (c) => !!c.name && !!c.amount && !!c.carbsPerPiece,
         ),
       });
     } catch (e) {
@@ -78,7 +79,7 @@ function Configuration() {
 
   return (
     <>
-      {isLoading && <div>Lädt...</div>}
+      {isLoading && <LoadingSpinner />}
       <section className="mb-24">
         <Heading
           title="Bestandteile konfigurieren"

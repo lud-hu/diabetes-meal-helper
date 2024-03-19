@@ -44,7 +44,7 @@ export const getMealForToday = async (db: Firestore) => {
   const mealQuery = query(
     collection,
     where("date", ">", startOfDay),
-    where("date", "<=", endOfDay)
+    where("date", "<=", endOfDay),
   );
   const docs = await getDocs(mealQuery);
   const finalDocs: Meal[] = [];
@@ -52,7 +52,7 @@ export const getMealForToday = async (db: Firestore) => {
     finalDocs.push({
       ...d.data(),
       id: d.id,
-    })
+    }),
   );
 
   if (finalDocs.length > 1)
@@ -73,7 +73,7 @@ export const getMealForToday = async (db: Firestore) => {
  */
 export const createOrUpdateMeal = async (
   db: Firestore,
-  meal: Partial<Meal>
+  meal: Partial<Meal>,
 ) => {
   const collection = createCollection<Meal>(db, "meals");
 
