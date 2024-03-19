@@ -46,7 +46,13 @@ function Configuration() {
   const saveMealToDb = async (updatedMeal: Meal) => {
     setIsLoading(true);
     try {
-      createOrUpdateMeal(db, updatedMeal);
+      createOrUpdateMeal(db, {
+        ...updatedMeal,
+        // Filter out placeholder compontent if present:
+        mealComponents: updatedMeal.mealComponents.filter(
+          (c) => !!c.name && !!c.amount && !!c.carbsPerPiece
+        ),
+      });
     } catch (e) {
       console.log(e);
     } finally {
