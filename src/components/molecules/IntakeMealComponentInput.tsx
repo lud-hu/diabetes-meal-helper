@@ -15,6 +15,7 @@ function IntakeMealComponentInput({
         type="number"
         placeholder="4"
         className="w-12 sm:w-16"
+        min="0"
         value={component.eaten}
         onChange={(e) =>
           updateMealComponent({

@@ -78,13 +78,14 @@ function IntakeMeal() {
   };
 
   const afterMealBolus = useMemo(() => {
-    if (meal?.mealComponents.every((c) => !!c.eaten)) {
+    if (meal?.mealComponents.every((c) => typeof c.eaten !== "undefined")) {
       const totalCarbsEaten = meal.mealComponents.reduce(
         (acc, c) => acc + c.eaten! * c.carbsPerPiece!,
         0,
       );
       return totalCarbsEaten - meal.preMealBolus;
     }
+    // If nothing was selected so far, return null
     return null;
   }, [meal]);
 
@@ -104,7 +105,7 @@ function IntakeMeal() {
             <div className="flex items-center justify-between gap-4">
               <div>
                 <span style={{ fontWeight: "bold" }}>{meal.preMealBolus}</span>{" "}
-                kh über X Symbol eingeben
+                kh über X Symbol eingeben.
               </div>
               <button onClick={() => setPreBolusGiven(!meal.preMealBolusGiven)}>
                 {meal.preMealBolusGiven ? "Erledigt ✅" : "Erledigt?"}
@@ -126,12 +127,12 @@ function IntakeMeal() {
                 </li>
               ))}
             </ol>
-            {afterMealBolus && (
+            {afterMealBolus !== null && (
               <div className="flex items-center justify-between gap-4">
                 {afterMealBolus > 0 ? (
                   <div>
                     <span style={{ fontWeight: "bold" }}>{afterMealBolus}</span>{" "}
-                    kh über X Symbol eingeben
+                    kh über X Symbol eingeben.
                   </div>
                 ) : (
                   <div>
@@ -150,7 +151,7 @@ function IntakeMeal() {
                         Gummibärchen
                       </>
                     )}{" "}
-                    essen
+                    essen.
                   </div>
                 )}
                 <button onClick={() => setAfterBolusGiven(true)}>
