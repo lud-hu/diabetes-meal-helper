@@ -1,20 +1,28 @@
-import { Firestore, doc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
+import {
+  Firestore,
+  doc,
+  getDocs,
+  query,
+  setDoc,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { createCollection } from "../firebase";
 
 export interface Meal {
-    id?: string;
-    mealComponents: MealComponent[];
-    preMealBolus: number;
-    date: Date;
-    preMealBolusGiven?: boolean;
-    afterMealBolusGiven?: boolean;
+  id?: string;
+  mealComponents: MealComponent[];
+  preMealBolus: number;
+  date: Date;
+  preMealBolusGiven?: boolean;
+  afterMealBolusGiven?: boolean;
 }
 
 export interface MealComponent {
-    name?: string;
-    amount?: number;
-    carbsPerPiece?: number;
-    eaten?: number;
+  name?: string;
+  amount?: number;
+  carbsPerPiece?: number;
+  eaten?: number;
 }
 
 /**
@@ -24,29 +32,35 @@ export interface MealComponent {
  * @returns
  */
 export const getMealForToday = async (db: Firestore) => {
-    const collection = createCollection<Meal>(db, "meals");
+  const collection = createCollection<Meal>(db, "meals");
 
-    // Start of day
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
-    // End of day
-    const endOfDay = new Date();
-    endOfDay.setHours(23, 59, 59, 999);
+  // Start of day
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+  // End of day
+  const endOfDay = new Date();
+  endOfDay.setHours(23, 59, 59, 999);
 
-    const mealQuery = query(collection, where("date", ">", startOfDay), where("date", "<=", endOfDay));
-    const docs = await getDocs(mealQuery);
-    const finalDocs: Meal[] = [];
-    docs.docs.forEach((d) =>
-        finalDocs.push({
-            ...d.data(),
-            id: d.id,
-        })
-    );
+  const mealQuery = query(
+    collection,
+    where("date", ">", startOfDay),
+    where("date", "<=", endOfDay)
+  );
+  const docs = await getDocs(mealQuery);
+  const finalDocs: Meal[] = [];
+  docs.docs.forEach((d) =>
+    finalDocs.push({
+      ...d.data(),
+      id: d.id,
+    })
+  );
 
-    if (finalDocs.length > 1) return Promise.reject("Ohje... Zu viel Mahlzeiten!");
-    if (finalDocs.length == 0) return Promise.reject("Ohje... Keine Mahlzeiten gefunden!");
+  if (finalDocs.length > 1)
+    return Promise.reject("Ohje... Zu viel Mahlzeiten!");
+  if (finalDocs.length == 0)
+    return Promise.reject("Ohje... Keine Mahlzeiten gefunden!");
 
-    return finalDocs[0];
+  return finalDocs[0];
 };
 
 /**
@@ -57,19 +71,22 @@ export const getMealForToday = async (db: Firestore) => {
  * @param meal
  * @returns
  */
-export const createOrUpdateMeal = async (db: Firestore, meal: Partial<Meal>) => {
-    const collection = createCollection<Meal>(db, "meals");
+export const createOrUpdateMeal = async (
+  db: Firestore,
+  meal: Partial<Meal>
+) => {
+  const collection = createCollection<Meal>(db, "meals");
 
-    console.log(meal);
-    if (meal.id) {
-        // meal existing, perform update
-        return updateDoc(doc(collection, meal.id), {
-            ...meal,
-            // How to ignore the id field here?
-            id: null,
-        });
-    } else {
-        // new meal, perform creation
-        return setDoc(doc(collection), meal);
-    }
+  console.log(meal);
+  if (meal.id) {
+    // meal existing, perform update
+    return updateDoc(doc(collection, meal.id), {
+      ...meal,
+      // How to ignore the id field here?
+      id: null,
+    });
+  } else {
+    // new meal, perform creation
+    return setDoc(doc(collection), meal);
+  }
 };
