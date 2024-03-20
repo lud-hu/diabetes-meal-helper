@@ -162,6 +162,11 @@ function IntakeMeal() {
           </section>
         </>
       )}
+      <section className="version">
+        <div>
+          v0.0.1
+        </div>
+      </section>
     </>
   );
 }
