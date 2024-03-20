@@ -105,7 +105,7 @@ function IntakeMeal() {
             <div className="flex items-center justify-between gap-4">
               <div>
                 <span style={{ fontWeight: "bold" }}>{meal.preMealBolus}</span>{" "}
-                KH über "Messer und Gabel" Symbol eingeben (Sofort-Bolus).
+                KH über 🍴 "Messer und Gabel" Symbol eingeben (Sofort-Bolus).
                 {" "}<br></br><br></br>
                 <span style={{ fontWeight: "bold" }}>{meal.preMealSnack}</span>{" "}
                 KH als Snack eingeben (Menü - Mahlzeit eingeben - Snack).
@@ -135,7 +135,7 @@ function IntakeMeal() {
                 {afterMealBolus > 0 ? (
                   <div>
                     <span style={{ fontWeight: "bold" }}>{afterMealBolus}</span>{" "}
-                    KH über "Messer und Gabel" Symbol Symbol eingeben.
+                    KH über 🍴 "Messer und Gabel" Symbol eingeben.
                   </div>
                 ) : (
                   <div>
