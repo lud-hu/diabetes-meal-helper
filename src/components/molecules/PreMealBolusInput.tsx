@@ -12,7 +12,7 @@ function PreMealBolusInput({ bolus, setBolus }: PreMealBolusInputProps) {
         value={bolus}
         onChange={(e) => setBolus(parseFloat(e.target.value))}
       />
-      kh vor Mahlzeit
+    KH vor Mahlzeit
     </div>
   );
 }

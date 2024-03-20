@@ -49,7 +49,7 @@ function MealComponentInput({
           })
         }
       />
-      kh
+      KH
     </div>
   );
 }
