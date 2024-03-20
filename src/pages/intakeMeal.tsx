@@ -83,7 +83,7 @@ function IntakeMeal() {
         (acc, c) => acc + c.eaten! * c.carbsPerPiece!,
         0,
       );
-      return totalCarbsEaten - meal.preMealBolus;
+      return totalCarbsEaten - meal.preMealBolus - meal.preMealSnack;
     }
     // If nothing was selected so far, return null
     return null;
