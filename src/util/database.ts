@@ -13,6 +13,7 @@ export interface Meal {
   id?: string;
   mealComponents: MealComponent[];
   preMealBolus: number;
+  preMealSnack: number;
   date: Date;
   preMealBolusGiven?: boolean;
   afterMealBolusGiven?: boolean;

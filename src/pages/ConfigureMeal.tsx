@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import PreMealBolusInput from "../components/molecules/PreMealBolusInput";
+import PreMealSnackInput from "../components/molecules/PreMealSnackInput";
 import MealComponentInput from "../components/molecules/mealComponentInput";
 import { db } from "../firebase";
 import {
@@ -21,6 +22,7 @@ function Configuration() {
   const [meal, setMeal] = useState<Meal>({
     mealComponents: [emptyMealComponent],
     preMealBolus: 0,
+    preMealSnack: 0,
     date: new Date(),
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -117,6 +119,21 @@ function Configuration() {
             setMeal((m: Meal) => ({
               ...m,
               preMealBolus: update,
+            }))
+          }
+        />
+      </section>
+      <section className="mb-12">
+        <Heading
+          title="Snack-Menge vor Mahlzeit"
+          subtitle="Für diese Menge an Kohlenhydraten muss vor der Mahlzeit ein Snack gegeben werden."
+        />
+        <PreMealSnackInput
+          bolus={meal.preMealSnack}
+          setBolus={(update) =>
+            setMeal((m: Meal) => ({
+              ...m,
+              preMealSnack: update,
             }))
           }
         />
