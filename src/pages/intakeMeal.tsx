@@ -148,7 +148,7 @@ function IntakeMeal() {
                       {Math.abs(afterMealBolus)}
                     </span>{" "}
                     Traubenzucker{" "}
-                    {Math.abs(afterMealBolus) / 2 > 1 && (
+                    {Math.abs(afterMealBolus) / 2 >= 1 && (
                       <>
                         oder{" "}
                         <span style={{ fontWeight: "bold" }}>
