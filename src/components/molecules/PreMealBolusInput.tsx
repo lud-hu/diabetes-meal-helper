@@ -9,6 +9,7 @@ function PreMealBolusInput({ bolus, setBolus }: PreMealBolusInputProps) {
       <input
         type="number"
         className="w-12 sm:w-16"
+        min="0"
         value={bolus}
         onChange={(e) => setBolus(parseFloat(e.target.value))}
       />
