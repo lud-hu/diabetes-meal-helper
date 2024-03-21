@@ -102,16 +102,20 @@ function IntakeMeal() {
               title="Vor dem Essen"
               subtitle="Ein gewisse Menge der Kohlenhydrate muss man vor dem Essen eingeben."
             />
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
-                <span style={{ fontWeight: "bold" }}>{meal.preMealBolus}</span>{" "}
-                KH über 🍴 "Messer und Gabel" Symbol eingeben (Sofort-Bolus).{" "}
-                <br></br>
-                <br></br>
-                <span style={{ fontWeight: "bold" }}>
-                  {meal.preMealSnack}
-                </span>{" "}
-                KH als Snack eingeben (Menü - Mahlzeit eingeben - Snack).
+                <div className="mb-3">
+                  <span style={{ fontWeight: "bold" }}>
+                    {meal.preMealBolus}
+                  </span>{" "}
+                  KH über 🍴 "Messer und Gabel" Symbol eingeben (Sofort-Bolus).
+                </div>
+                <div>
+                  <span style={{ fontWeight: "bold" }}>
+                    {meal.preMealSnack}
+                  </span>{" "}
+                  KH als Snack eingeben (Menü - Mahlzeit eingeben - Snack).
+                </div>
               </div>
               <button onClick={() => setPreBolusGiven(!meal.preMealBolusGiven)}>
                 {meal.preMealBolusGiven ? "Erledigt ✅" : "Erledigt?"}

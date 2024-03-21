@@ -10,10 +10,10 @@ function PreMealBolusInput({ bolus, setBolus }: PreMealBolusInputProps) {
         type="number"
         className="w-12 sm:w-16"
         min="0"
-        value={bolus}
+        value={bolus || ""}
         onChange={(e) => setBolus(parseFloat(e.target.value))}
       />
-    KH vor Mahlzeit
+      KH vor Mahlzeit
     </div>
   );
 }
