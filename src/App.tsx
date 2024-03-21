@@ -1,4 +1,5 @@
 import "./App.css";
+import Footer from "./components/molecules/Footer";
 import Header from "./components/molecules/Header";
 import Configuration from "./pages/ConfigureMeal";
 import IntakeMeal from "./pages/intakeMeal";
@@ -21,12 +22,13 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <>
+    <div className="flex flex-col h-full">
       <Header />
-      <div className="p-8">
+      <div className="p-8 flex-1">
         <RouterProvider router={router} />
       </div>
-    </>
+      <Footer />
+    </div>
   );
 }
 
