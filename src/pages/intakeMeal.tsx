@@ -83,7 +83,7 @@ function IntakeMeal() {
         (acc, c) => acc + c.eaten! * c.carbsPerPiece!,
         0,
       );
-      return totalCarbsEaten - meal.preMealBolus;
+      return totalCarbsEaten - meal.preMealBolus - meal.preMealSnack;
     }
     // If nothing was selected so far, return null
     return null;
@@ -102,10 +102,20 @@ function IntakeMeal() {
               title="Vor dem Essen"
               subtitle="Ein gewisse Menge der Kohlenhydrate muss man vor dem Essen eingeben."
             />
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
-                <span style={{ fontWeight: "bold" }}>{meal.preMealBolus}</span>{" "}
-                kh über X Symbol eingeben.
+                <div className="mb-3">
+                  <span style={{ fontWeight: "bold" }}>
+                    {meal.preMealBolus}
+                  </span>{" "}
+                  KH über 🍴 "Messer und Gabel" Symbol eingeben (Sofort-Bolus).
+                </div>
+                <div>
+                  <span style={{ fontWeight: "bold" }}>
+                    {meal.preMealSnack}
+                  </span>{" "}
+                  KH als Snack eingeben (Menü - Mahlzeit eingeben - Snack).
+                </div>
               </div>
               <button onClick={() => setPreBolusGiven(!meal.preMealBolusGiven)}>
                 {meal.preMealBolusGiven ? "Erledigt ✅" : "Erledigt?"}
@@ -132,7 +142,7 @@ function IntakeMeal() {
                 {afterMealBolus > 0 ? (
                   <div>
                     <span style={{ fontWeight: "bold" }}>{afterMealBolus}</span>{" "}
-                    kh über X Symbol eingeben.
+                    KH über 🍴 "Messer und Gabel" Symbol eingeben.
                   </div>
                 ) : (
                   <div>
@@ -142,7 +152,7 @@ function IntakeMeal() {
                       {Math.abs(afterMealBolus)}
                     </span>{" "}
                     Traubenzucker{" "}
-                    {Math.abs(afterMealBolus) / 2 > 1 && (
+                    {Math.abs(afterMealBolus) / 2 >= 1 && (
                       <>
                         oder{" "}
                         <span style={{ fontWeight: "bold" }}>

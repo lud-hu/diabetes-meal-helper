@@ -13,6 +13,7 @@ export interface Meal {
   id?: string;
   mealComponents: MealComponent[];
   preMealBolus: number;
+  preMealSnack: number;
   date: Date;
   preMealBolusGiven?: boolean;
   afterMealBolusGiven?: boolean;
@@ -77,7 +78,6 @@ export const createOrUpdateMeal = async (
 ) => {
   const collection = createCollection<Meal>(db, "meals");
 
-  console.log(meal);
   if (meal.id) {
     // meal existing, perform update
     return updateDoc(doc(collection, meal.id), {

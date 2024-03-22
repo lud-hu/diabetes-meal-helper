@@ -21,6 +21,7 @@ function Configuration() {
   const [meal, setMeal] = useState<Meal>({
     mealComponents: [emptyMealComponent],
     preMealBolus: 0,
+    preMealSnack: 0,
     date: new Date(),
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -117,6 +118,21 @@ function Configuration() {
             setMeal((m: Meal) => ({
               ...m,
               preMealBolus: update,
+            }))
+          }
+        />
+      </section>
+      <section className="mb-12">
+        <Heading
+          title="Snack-Menge vor Mahlzeit"
+          subtitle="Für diese Menge an Kohlenhydraten muss vor der Mahlzeit ein Snack gegeben werden."
+        />
+        <PreMealBolusInput
+          bolus={meal.preMealSnack}
+          setBolus={(update) =>
+            setMeal((m: Meal) => ({
+              ...m,
+              preMealSnack: update,
             }))
           }
         />
