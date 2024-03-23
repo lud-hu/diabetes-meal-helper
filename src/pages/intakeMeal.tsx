@@ -77,6 +77,42 @@ function IntakeMeal() {
     }
   };
 
+  const handleBloodSugarCheck = () => {
+    const selectedOption = document.querySelector('input[name="bloodSugar"]:checked');
+  
+    if (selectedOption) {
+      const value = selectedOption.value;
+
+      let newAfterMealBolus = afterMealBolus;
+      if (value === "yes") {
+        // Blood sugar is higher than 200 mg/dl
+        // Decrease afterMealBolus by 2 KH
+        newAfterMealBolus = afterMealBolus - 2;       
+      }
+
+      <div className="flex items-center justify-between gap-4">
+        {newAfterMealBolus > 0 ? (
+          <div>
+            <span style={{ fontWeight: "bold" }}>{newAfterMealBolus}</span>{" "}
+            KH über 🍴 "Messer und Gabel" Symbol eingeben.
+          </div>
+        ) : newAfterMealBolus === 0 ? (
+          <div>
+            Kein zusätzlicher Bolus erforderlich.
+          </div>
+        ) : (
+          <div>
+            <span style={{ fontWeight: "bold" }}>
+            {Math.ceil(Math.abs(newAfterMealBolus) / 2)}
+            </span>{" "}
+            Traubenzucker oder Gummibärchen essen.
+          </div>
+        )}
+      </div>
+
+    }
+  };
+ 
   const afterMealBolus = useMemo(() => {
     if (meal?.mealComponents.every((c) => typeof c.eaten !== "undefined")) {
       const totalCarbsEaten = meal.mealComponents.reduce(
@@ -150,11 +186,12 @@ function IntakeMeal() {
                   </div>
                 ) : (
                   <div>
-                    Theo muss noch{" "}
-                    <span style={{ fontWeight: "bold" }}>
-                      {Math.ceil(Math.abs(afterMealBolus) / 2)}
-                    </span>{" "}
-                    Traubenzucker oder Gummibärchen essen.
+                    Ist der Blutzucker höher als 200 mg/dl?
+                    <input type="radio" name="bloodSugar" value="yes" id="yes" />
+                    <label htmlFor="yes">Ja</label>
+                    <input type="radio" name="bloodSugar" value="no" id="no" />
+                    <label htmlFor="no">Nein</label>
+                    <button onClick={() => handleBloodSugarCheck()}>Bestätigen</button>
                   </div>
                 )}
                 <button onClick={() => setAfterBolusGiven(true)}>
