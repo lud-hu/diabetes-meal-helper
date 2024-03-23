@@ -82,6 +82,8 @@ function Configuration() {
     <>
       {isLoading && <LoadingSpinner />}
       <section className="mb-24">
+        {meal.id &&
+          "Initial gespeichert: " + meal.date.toDate().toLocaleTimeString()}
         <Heading
           title="Bestandteile konfigurieren"
           subtitle="Einzelne Bestandteile des Mittagessens samt Kohlenhydratangaben pro Stück."

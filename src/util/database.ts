@@ -6,6 +6,9 @@ import {
   setDoc,
   updateDoc,
   where,
+  orderBy,
+  limit,
+  Timestamp,
 } from "firebase/firestore";
 import { createCollection } from "../firebase";
 
@@ -14,7 +17,7 @@ export interface Meal {
   mealComponents: MealComponent[];
   preMealBolus: number;
   preMealSnack: number;
-  date: Date;
+  date: Timestamp;
   preMealBolusGiven?: boolean;
   afterMealBolusGiven?: boolean;
 }
@@ -42,10 +45,16 @@ export const getMealForToday = async (db: Firestore) => {
   const endOfDay = new Date();
   endOfDay.setHours(23, 59, 59, 999);
 
+  console.log("Start of day", startOfDay);
+  console.log("End of day", endOfDay);
+
   const mealQuery = query(
     collection,
     where("date", ">", startOfDay),
     where("date", "<=", endOfDay),
+    orderBy("date", "desc"),
+    // Should never be more than one, but we need to find the bug.
+    limit(5),
   );
   const docs = await getDocs(mealQuery);
   const finalDocs: Meal[] = [];
@@ -56,8 +65,9 @@ export const getMealForToday = async (db: Firestore) => {
     }),
   );
 
-  if (finalDocs.length > 1)
-    Promise.reject("Ohje... Zu viel Mahlzeiten!");
+  console.log("Found meals: " + finalDocs.length);
+
+  if (finalDocs.length > 1) Promise.reject("Ohje... Zu viel Mahlzeiten!");
   if (finalDocs.length == 0)
     return Promise.reject("Ohje... Keine Mahlzeiten gefunden!");
 
@@ -79,6 +89,7 @@ export const createOrUpdateMeal = async (
   const collection = createCollection<Meal>(db, "meals");
 
   if (meal.id) {
+    console.log("Updating " + meal.id);
     // meal existing, perform update
     return updateDoc(doc(collection, meal.id), {
       ...meal,
@@ -86,6 +97,7 @@ export const createOrUpdateMeal = async (
       id: null,
     });
   } else {
+    console.log("Creating new meal");
     // new meal, perform creation
     return setDoc(doc(collection), meal);
   }
