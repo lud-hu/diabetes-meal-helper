@@ -10,6 +10,7 @@ import {
 } from "../util/database";
 import Heading from "../components/molecules/Heading";
 import LoadingSpinner from "../components/molecules/LoadingSpinner";
+import { Timestamp } from "firebase/firestore";
 
 const emptyMealComponent = {
   name: undefined,
@@ -22,7 +23,7 @@ function Configuration() {
     mealComponents: [emptyMealComponent],
     preMealBolus: 0,
     preMealSnack: 0,
-    date: new Date(),
+    date: Timestamp.fromDate(new Date()),
   });
   const [isLoading, setIsLoading] = useState(true);
 
