@@ -15,6 +15,7 @@ function MealComponentInput({
         type="number"
         placeholder="4"
         className="w-12 sm:w-16"
+        min={0}
         value={component.amount || ""}
         onChange={(e) =>
           updateMealComponent({
@@ -41,6 +42,8 @@ function MealComponentInput({
         type="number"
         placeholder="0.5"
         className="w-12 sm:w-16"
+        min={0}
+        step={0.5}
         value={component.carbsPerPiece || ""}
         onChange={(e) =>
           updateMealComponent({
