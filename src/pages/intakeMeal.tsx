@@ -144,9 +144,12 @@ function IntakeMeal() {
                     <span style={{ fontWeight: "bold" }}>{afterMealBolus}</span>{" "}
                     KH über 🍴 "Messer und Gabel" Symbol eingeben.
                   </div>
+                ) : afterMealBolus === 0 ? (
+                  <div>
+                    Kein zusätzlicher Bolus erforderlich.
+                  </div>
                 ) : (
                   <div>
-                    {/* Wenn negativ: 1 Traubenzucker oder 1 Gummibärchen pro 2kh! */}
                     Theo muss noch{" "}
                     <span style={{ fontWeight: "bold" }}>
                       {Math.ceil(Math.abs(afterMealBolus) / 2)}
