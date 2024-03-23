@@ -146,22 +146,12 @@ function IntakeMeal() {
                   </div>
                 ) : (
                   <div>
-                    {/* Wenn negativ: 1 Traubenzucker pro fehlendem kh, oder 1 Gummibärchen pro 2kh! */}
+                    {/* Wenn negativ: 1 Traubenzucker oder 1 Gummibärchen pro 2kh! */}
                     Theo muss noch{" "}
                     <span style={{ fontWeight: "bold" }}>
-                      {Math.abs(afterMealBolus)}
+                      {Math.ceil(Math.abs(afterMealBolus) / 2)}
                     </span>{" "}
-                    Traubenzucker{" "}
-                    {Math.abs(afterMealBolus) / 2 >= 1 && (
-                      <>
-                        oder{" "}
-                        <span style={{ fontWeight: "bold" }}>
-                          {Math.abs(afterMealBolus) / 2}
-                        </span>{" "}
-                        Gummibärchen
-                      </>
-                    )}{" "}
-                    essen.
+                    Traubenzucker oder Gummibärchen essen.
                   </div>
                 )}
                 <button onClick={() => setAfterBolusGiven(true)}>
