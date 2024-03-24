@@ -10,6 +10,7 @@ import IntakeMealComponentInput from "../components/molecules/IntakeMealComponen
 import Heading from "../components/molecules/Heading";
 import LoadingSpinner from "../components/molecules/LoadingSpinner";
 import YesNoInput from "../components/atoms/YesNoInput";
+import confetti from "canvas-confetti";
 
 function IntakeMeal() {
   const [isLoading, setIsLoading] = useState(false);
@@ -187,9 +188,16 @@ function IntakeMeal() {
                 )}
                 <div className="w-full text-center">
                   <button
-                    onClick={() =>
-                      setAfterBolusGiven(!meal.afterMealBolusGiven)
-                    }
+                    onClick={() => {
+                      if (!meal.afterMealBolusGiven) {
+                        confetti({
+                          particleCount: 100,
+                          spread: 70,
+                          origin: { y: 0.6 },
+                        });
+                      }
+                      setAfterBolusGiven(!meal.afterMealBolusGiven);
+                    }}
                   >
                     {meal.afterMealBolusGiven ? "Erledigt ✅" : "Erledigt?"}
                   </button>
