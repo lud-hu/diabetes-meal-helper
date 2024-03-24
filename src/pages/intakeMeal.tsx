@@ -83,33 +83,17 @@ function IntakeMeal() {
     if (selectedOption) {
       const value = selectedOption.value;
 
-      let newAfterMealBolus = afterMealBolus;
-      if (value === "yes") {
-        // Blood sugar is higher than 200 mg/dl
-        // Decrease afterMealBolus by 2 KH
-        newAfterMealBolus = afterMealBolus - 2;       
+      if (meal)
+      {
+        if (value === "yes") {
+          // Blood sugar is higher than 200 mg/dl
+          // Decrease afterMealBolus by 2 KH
+          console.log("HighBloodsugar");
+          setMeal({ ...meal, highBloodSugarAdaption: -2 });
+        }
+        else
+        {setMeal({ ...meal, highBloodSugarAdaption: 0 });}
       }
-
-      <div className="flex items-center justify-between gap-4">
-        {newAfterMealBolus > 0 ? (
-          <div>
-            <span style={{ fontWeight: "bold" }}>{newAfterMealBolus}</span>{" "}
-            KH über 🍴 "Messer und Gabel" Symbol eingeben.
-          </div>
-        ) : newAfterMealBolus === 0 ? (
-          <div>
-            Kein zusätzlicher Bolus erforderlich.
-          </div>
-        ) : (
-          <div>
-            <span style={{ fontWeight: "bold" }}>
-            {Math.ceil(Math.abs(newAfterMealBolus) / 2)}
-            </span>{" "}
-            Traubenzucker oder Gummibärchen essen.
-          </div>
-        )}
-      </div>
-
     }
   };
  
@@ -119,11 +103,13 @@ function IntakeMeal() {
         (acc, c) => acc + c.eaten! * c.carbsPerPiece!,
         0,
       );
-      return totalCarbsEaten - meal.preMealBolus - meal.preMealSnack;
+      let temp = totalCarbsEaten - meal.preMealBolus - meal.preMealSnack - meal.highBloodSugarAdaption;
+      console.log("temp: ", temp);
+      return temp;
     }
     // If nothing was selected so far, return null
     return null;
-  }, [meal]);
+  }, [meal, meal?.highBloodSugarAdaption]);
 
   return (
     <>
@@ -175,6 +161,7 @@ function IntakeMeal() {
             </ol>
             {afterMealBolus !== null && (
               <div className="flex items-center justify-between gap-4">
+                {afterMealBolus};
                 {afterMealBolus > 0 ? (
                   <div>
                     <span style={{ fontWeight: "bold" }}>{afterMealBolus}</span>{" "}

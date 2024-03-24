@@ -17,6 +17,7 @@ export interface Meal {
   mealComponents: MealComponent[];
   preMealBolus: number;
   preMealSnack: number;
+  highBloodSugarAdaption: number;
   date: Timestamp;
   preMealBolusGiven?: boolean;
   afterMealBolusGiven?: boolean;

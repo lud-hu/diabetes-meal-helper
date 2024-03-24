@@ -23,6 +23,7 @@ function Configuration() {
     mealComponents: [emptyMealComponent],
     preMealBolus: 0,
     preMealSnack: 0,
+    highBloodSugarAdaption: 0,
     date: Timestamp.fromDate(new Date()),
   });
   const [isLoading, setIsLoading] = useState(true);
