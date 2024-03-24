@@ -13,6 +13,7 @@ import LoadingSpinner from "../components/molecules/LoadingSpinner";
 function IntakeMeal() {
   const [isLoading, setIsLoading] = useState(false);
   const [meal, setMeal] = useState<Meal>();
+  const [showAdditionalSugarText, setShowAdditionalSugarText] = useState(false);
 
   useEffect(() => {
     getTodaysMeal();
@@ -88,11 +89,12 @@ function IntakeMeal() {
         if (value === "yes") {
           // Blood sugar is higher than 200 mg/dl
           // Decrease afterMealBolus by 2 KH
-          console.log("HighBloodsugar");
           setMeal({ ...meal, highBloodSugarAdaption: -2 });
         }
         else
         {setMeal({ ...meal, highBloodSugarAdaption: 0 });}
+
+        setShowAdditionalSugarText(true);
       }
     }
   };
@@ -103,9 +105,7 @@ function IntakeMeal() {
         (acc, c) => acc + c.eaten! * c.carbsPerPiece!,
         0,
       );
-      let temp = totalCarbsEaten - meal.preMealBolus - meal.preMealSnack - meal.highBloodSugarAdaption;
-      console.log("temp: ", temp);
-      return temp;
+      return totalCarbsEaten - meal.preMealBolus - meal.preMealSnack - meal.highBloodSugarAdaption;;
     }
     // If nothing was selected so far, return null
     return null;
@@ -161,7 +161,6 @@ function IntakeMeal() {
             </ol>
             {afterMealBolus !== null && (
               <div className="flex items-center justify-between gap-4">
-                {afterMealBolus};
                 {afterMealBolus > 0 ? (
                   <div>
                     <span style={{ fontWeight: "bold" }}>{afterMealBolus}</span>{" "}
@@ -179,6 +178,16 @@ function IntakeMeal() {
                     <input type="radio" name="bloodSugar" value="no" id="no" />
                     <label htmlFor="no">Nein</label>
                     <button onClick={() => handleBloodSugarCheck()}>Bestätigen</button>
+
+                    {showAdditionalSugarText && (
+                      <div>
+                        Theo muss noch{" "}
+                        <span style={{ fontWeight: "bold" }}>
+                          {Math.ceil(Math.abs(afterMealBolus) / 2)}
+                        </span>{" "}
+                        Traubenzucker oder Gummibärchen essen.
+                      </div>
+                    )}
                   </div>
                 )}
                 <button onClick={() => setAfterBolusGiven(true)}>
