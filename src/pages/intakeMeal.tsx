@@ -145,7 +145,7 @@ function IntakeMeal() {
               title="Nach dem Essen"
               subtitle="Wie viel hat Theo insgesamt gegessen? Bitte gebe die Anzahl der Stücke ein."
             />
-            <ol>
+            <ol className="mb-3">
               {meal.mealComponents.map((c, i) => (
                 <li key={i}>
                   <IntakeMealComponentInput
@@ -156,7 +156,7 @@ function IntakeMeal() {
               ))}
             </ol>
             {afterMealBolus !== null && (
-              <div className="flex items-center justify-between gap-4">
+              <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
                 {afterMealBolus > 0 ? (
                   <div>
                     <span style={{ fontWeight: "bold" }}>{afterMealBolus}</span>{" "}
@@ -165,7 +165,7 @@ function IntakeMeal() {
                 ) : afterMealBolus === 0 ? (
                   <div>Kein zusätzlicher Bolus erforderlich.</div>
                 ) : (
-                  <div>
+                  <div className="w-full">
                     Ist der Blutzucker höher als 200 mg/dl?
                     <YesNoInput onChange={handleBloodSugarCheck} />
                     {afterMealBolus - meal.highBloodSugarAdaption < 0 ? (
@@ -185,9 +185,15 @@ function IntakeMeal() {
                     )}
                   </div>
                 )}
-                <button onClick={() => setAfterBolusGiven(true)}>
-                  {meal.afterMealBolusGiven ? "Erledigt ✅" : "Erledigt?"}
-                </button>
+                <div className="w-full text-center">
+                  <button
+                    onClick={() =>
+                      setAfterBolusGiven(!meal.afterMealBolusGiven)
+                    }
+                  >
+                    {meal.afterMealBolusGiven ? "Erledigt ✅" : "Erledigt?"}
+                  </button>
+                </div>
               </div>
             )}
           </section>

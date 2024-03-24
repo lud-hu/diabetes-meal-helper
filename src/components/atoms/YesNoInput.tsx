@@ -13,10 +13,11 @@ function YesNoInput({ onChange }: YesNoInputProps) {
   };
 
   return (
-    <form>
-      <div className="">
+    <form className="w-full flex">
+      <div className="flex-1">
         <label>
           <input
+            className="m-3"
             type="radio"
             value="yes"
             checked={selectedOption === "yes"}
@@ -25,9 +26,10 @@ function YesNoInput({ onChange }: YesNoInputProps) {
           Ja
         </label>
       </div>
-      <div className="">
+      <div className="flex-1">
         <label>
           <input
+            className="m-3"
             type="radio"
             value="no"
             checked={selectedOption === "no"}
