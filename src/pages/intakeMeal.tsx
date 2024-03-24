@@ -9,11 +9,11 @@ import { db } from "../firebase";
 import IntakeMealComponentInput from "../components/molecules/IntakeMealComponentInput";
 import Heading from "../components/molecules/Heading";
 import LoadingSpinner from "../components/molecules/LoadingSpinner";
+import YesNoInput from "../components/atoms/YesNoInput";
 
 function IntakeMeal() {
   const [isLoading, setIsLoading] = useState(false);
   const [meal, setMeal] = useState<Meal>();
-  const [showAdditionalSugarText, setShowAdditionalSugarText] = useState(false);
 
   useEffect(() => {
     getTodaysMeal();
@@ -78,38 +78,34 @@ function IntakeMeal() {
     }
   };
 
-  const handleBloodSugarCheck = () => {
-    const selectedOption = document.querySelector('input[name="bloodSugar"]:checked');
-  
-    if (selectedOption) {
-      const value = selectedOption.value;
-
-      if (meal)
-      {
-        if (value === "yes") {
-          // Blood sugar is higher than 200 mg/dl
-          // Decrease afterMealBolus by 2 KH
-          setMeal({ ...meal, highBloodSugarAdaption: -2 });
-        }
-        else
-        {setMeal({ ...meal, highBloodSugarAdaption: 0 });}
-
-        setShowAdditionalSugarText(true);
+  const handleBloodSugarCheck = (isBloodSugarHigh: boolean) => {
+    if (meal) {
+      if (isBloodSugarHigh) {
+        // Blood sugar is higher than 200 mg/dl
+        // Decrease afterMealBolus by 2 KH
+        setMeal({ ...meal, highBloodSugarAdaption: -2 });
+      } else {
+        setMeal({ ...meal, highBloodSugarAdaption: 0 });
       }
     }
   };
- 
+
+  /**
+   * Calculates the amount insulin (in KH) that needs to be injected after the meal.
+   * It does NOT include a potential high blood sugar adaption (so that
+   * there can be more reactive calculations be done beforehand).
+   */
   const afterMealBolus = useMemo(() => {
     if (meal?.mealComponents.every((c) => typeof c.eaten !== "undefined")) {
       const totalCarbsEaten = meal.mealComponents.reduce(
         (acc, c) => acc + c.eaten! * c.carbsPerPiece!,
         0,
       );
-      return totalCarbsEaten - meal.preMealBolus - meal.preMealSnack - meal.highBloodSugarAdaption;;
+      return totalCarbsEaten - meal.preMealBolus - meal.preMealSnack;
     }
     // If nothing was selected so far, return null
     return null;
-  }, [meal, meal?.highBloodSugarAdaption]);
+  }, [meal]);
 
   return (
     <>
@@ -167,26 +163,25 @@ function IntakeMeal() {
                     KH über 🍴 "Messer und Gabel" Symbol eingeben.
                   </div>
                 ) : afterMealBolus === 0 ? (
-                  <div>
-                    Kein zusätzlicher Bolus erforderlich.
-                  </div>
+                  <div>Kein zusätzlicher Bolus erforderlich.</div>
                 ) : (
                   <div>
                     Ist der Blutzucker höher als 200 mg/dl?
-                    <input type="radio" name="bloodSugar" value="yes" id="yes" />
-                    <label htmlFor="yes">Ja</label>
-                    <input type="radio" name="bloodSugar" value="no" id="no" />
-                    <label htmlFor="no">Nein</label>
-                    <button onClick={() => handleBloodSugarCheck()}>Bestätigen</button>
-
-                    {showAdditionalSugarText && (
+                    <YesNoInput onChange={handleBloodSugarCheck} />
+                    {afterMealBolus - meal.highBloodSugarAdaption < 0 ? (
                       <div>
                         Theo muss noch{" "}
                         <span style={{ fontWeight: "bold" }}>
-                          {Math.ceil(Math.abs(afterMealBolus) / 2)}
+                          {Math.ceil(
+                            Math.abs(
+                              afterMealBolus - meal.highBloodSugarAdaption,
+                            ) / 2,
+                          )}
                         </span>{" "}
                         Traubenzucker oder Gummibärchen essen.
                       </div>
+                    ) : (
+                      "Theo muss nichts mehr essen."
                     )}
                   </div>
                 )}
