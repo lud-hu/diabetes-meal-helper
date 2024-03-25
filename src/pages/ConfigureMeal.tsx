@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import PreMealBolusInput from "../components/molecules/PreMealBolusInput";
 import MealComponentInput from "../components/molecules/mealComponentInput";
 import { db } from "../firebase";
@@ -80,6 +80,21 @@ function Configuration() {
     }
   };
 
+  /**
+   * Calculates the total amount carbs for this dish.
+   */
+  const sumOfCarbs = useMemo(() => {
+    if (meal?.mealComponents.every((c) => typeof c.carbsPerPiece !== "undefined")) {
+      const totalCarbs = meal.mealComponents.reduce(
+        (acc, c) => acc + c.amount! * c.carbsPerPiece!,
+        0,
+      );
+      return totalCarbs;
+    }
+    // If nothing was selected so far, return null
+    return null;
+  }, [meal]);
+
   return (
     <>
       {isLoading && <LoadingSpinner />}
@@ -110,6 +125,11 @@ function Configuration() {
         >
           + Bestandteil hinzufügen
         </button>
+        {sumOfCarbs !== null && (
+          <div>
+            Summe der Kohlenhydrate: {sumOfCarbs}
+          </div>
+        )}
       </section>
       <section className="mb-12">
         <Heading
