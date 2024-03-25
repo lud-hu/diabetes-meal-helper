@@ -156,7 +156,7 @@ function IntakeMeal() {
                 </li>
               ))}
             </ol>
-            {afterMealBolus !== null && (
+            {afterMealBolus !== null && !Number.isNaN(afterMealBolus) && (
               <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
                 {afterMealBolus > 0 ? (
                   <div>
