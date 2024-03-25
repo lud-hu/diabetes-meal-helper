@@ -161,6 +161,15 @@ function Configuration() {
           }
         />
       </section>
+      {sumOfCarbs !== null && (
+        <div className="w-full">
+          {sumOfCarbs - meal.preMealBolus - meal.preMealSnack < 0 ? (
+            <div>
+              Warnung: Der Gesamtbolus ist größer als die gesamten KH!
+            </div>
+          ): (<div></div>)}  
+        </div>     
+      )}
       <button onClick={() => saveMealToDb(meal)}>Speichern</button>
     </>
   );
