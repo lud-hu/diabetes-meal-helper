@@ -16,3 +16,14 @@ input:not([type="checkbox"]):not([type="radio"]) {
 button {
   @apply bg-emerald-700 dark:bg-emerald-500 hover:bg-emerald-500 dark:hover:bg-emerald-600 text-white dark:text-slate-800 font-bold py-2 px-4 rounded;
 }
+
+input[type="number"].no-arrows::-webkit-outer-spin-button,
+input[type="number"].no-arrows::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"].no-arrows {
+  -moz-appearance: textfield;
+}

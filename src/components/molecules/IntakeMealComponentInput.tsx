@@ -1,4 +1,5 @@
 import { MealComponent } from "../../util/database";
+import NumberInput from "../atoms/NumberInput";
 
 interface IntakeMealComponentInputProps {
   component: MealComponent;
@@ -11,21 +12,19 @@ function IntakeMealComponentInput({
 }: IntakeMealComponentInputProps) {
   return (
     <div className="flex gap-1 items-center py-2">
-      <input
-        type="number"
-        placeholder="4"
-        className="w-12 sm:w-16"
-        min="0"
+      <NumberInput
+        min={0}
         max={component.amount}
         value={component.eaten}
         onChange={(e) =>
           updateMealComponent({
             ...component,
-            eaten: parseInt(e.target.value),
+            eaten: e,
           })
         }
+        placeholder="4"
       />
-      von {component.amount} Stücken {component.name} gegessen
+      von {component.amount} Stk. {component.name} gegessen
     </div>
   );
 }

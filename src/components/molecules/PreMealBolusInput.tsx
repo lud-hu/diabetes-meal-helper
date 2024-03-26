@@ -1,3 +1,5 @@
+import NumberInput from "../atoms/NumberInput";
+
 interface PreMealBolusInputProps {
   bolus: number;
   setBolus: (b: number) => void;
@@ -6,12 +8,11 @@ interface PreMealBolusInputProps {
 function PreMealBolusInput({ bolus, setBolus }: PreMealBolusInputProps) {
   return (
     <div className="flex gap-1 items-center py-2">
-      <input
-        type="number"
-        className="w-12 sm:w-16"
-        min="0"
-        value={bolus || ""}
-        onChange={(e) => setBolus(parseFloat(e.target.value))}
+      <NumberInput
+        placeholder="4"
+        min={0}
+        value={bolus}
+        onChange={(e) => setBolus(e)}
       />
       KH vor Mahlzeit
     </div>

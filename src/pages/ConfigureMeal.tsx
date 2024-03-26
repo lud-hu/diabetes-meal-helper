@@ -84,7 +84,9 @@ function Configuration() {
    * Calculates the total amount carbs for this dish.
    */
   const sumOfCarbs = useMemo(() => {
-    if (meal?.mealComponents.every((c) => typeof c.carbsPerPiece !== "undefined")) {
+    if (
+      meal?.mealComponents.every((c) => typeof c.carbsPerPiece !== "undefined")
+    ) {
       const totalCarbs = meal.mealComponents.reduce(
         (acc, c) => acc + c.amount! * c.carbsPerPiece!,
         0,
@@ -115,19 +117,21 @@ function Configuration() {
             </li>
           ))}
         </ol>
-        <button
-          onClick={() =>
-            setMeal({
-              ...meal,
-              mealComponents: [...meal.mealComponents, emptyMealComponent],
-            })
-          }
-        >
-          + Bestandteil hinzufügen
-        </button>
+        <div className="text-center">
+          <button
+            onClick={() =>
+              setMeal({
+                ...meal,
+                mealComponents: [...meal.mealComponents, emptyMealComponent],
+              })
+            }
+          >
+            + Bestandteil hinzufügen
+          </button>
+        </div>
         {sumOfCarbs !== null && (
-          <div>
-            Summe der Kohlenhydrate: {sumOfCarbs}
+          <div className="pt-5">
+            <span className="text-2xl">{sumOfCarbs}</span> Kohlenhydrate gesamt
           </div>
         )}
       </section>
@@ -164,13 +168,15 @@ function Configuration() {
       {sumOfCarbs !== null && (
         <div className="w-full">
           {sumOfCarbs - meal.preMealBolus - meal.preMealSnack < 0 ? (
-            <div>
-              Warnung: Der Gesamtbolus ist größer als die gesamten KH!
-            </div>
-          ): (<div></div>)}  
-        </div>     
+            <div>Warnung: Der Gesamtbolus ist größer als die gesamten KH!</div>
+          ) : (
+            <div></div>
+          )}
+        </div>
       )}
-      <button onClick={() => saveMealToDb(meal)}>Speichern</button>
+      <div className="text-center">
+        <button onClick={() => saveMealToDb(meal)}>Speichern</button>
+      </div>
     </>
   );
 }
