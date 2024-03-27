@@ -1,4 +1,5 @@
 import { MealComponent } from "../../util/database";
+import NumberInput from "../atoms/NumberInput";
 
 interface MealComponentInputProps {
   component: MealComponent;
@@ -10,49 +11,50 @@ function MealComponentInput({
   updateMealComponent,
 }: MealComponentInputProps) {
   return (
-    <div className="flex gap-1 items-center py-2">
-      <input
-        type="number"
-        placeholder="4"
-        className="w-12 sm:w-16"
-        min={0}
-        value={component.amount || ""}
-        onChange={(e) =>
-          updateMealComponent({
-            ...component,
-            amount: parseInt(e.target.value),
-          })
-        }
-      />
-      Stücke
-      <input
-        type="text"
-        className="w-28"
-        placeholder="Apfel"
-        value={component.name || ""}
-        onChange={(e) =>
-          updateMealComponent({
-            ...component,
-            name: e.target.value,
-          })
-        }
-      />
-      mit je
-      <input
-        type="number"
-        placeholder="0.5"
-        className="w-12 sm:w-16"
-        min={0}
-        step={0.5}
-        value={component.carbsPerPiece || ""}
-        onChange={(e) =>
-          updateMealComponent({
-            ...component,
-            carbsPerPiece: parseFloat(e.target.value),
-          })
-        }
-      />
-      KH
+    <div>
+      <div className="py-4">
+        <input
+          type="text"
+          className="w-full"
+          placeholder="Apfel"
+          value={component.name || ""}
+          onChange={(e) =>
+            updateMealComponent({
+              ...component,
+              name: e.target.value,
+            })
+          }
+        />
+      </div>
+      <div className="flex gap-1 items-center pl-4 pb-4 flex-wrap">
+        <NumberInput
+          placeholder="4"
+          min={0}
+          value={component.amount}
+          onChange={(e) =>
+            updateMealComponent({
+              ...component,
+              amount: e,
+            })
+          }
+        />
+        Stk. mit je
+        <input
+          type="number"
+          placeholder="0.5"
+          className="w-12 sm:w-16"
+          min={0}
+          step={0.5}
+          value={component.carbsPerPiece || ""}
+          onChange={(e) =>
+            updateMealComponent({
+              ...component,
+              carbsPerPiece: parseFloat(e.target.value),
+            })
+          }
+        />
+        KH
+      </div>
     </div>
   );
 }
