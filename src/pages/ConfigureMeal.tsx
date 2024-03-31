@@ -14,8 +14,9 @@ import { Timestamp } from "firebase/firestore";
 
 const emptyMealComponent = {
   name: undefined,
-  amount: undefined,
+  amount: 0,
   carbsPerPiece: undefined,
+  eaten: 0
 };
 
 function Configuration() {
