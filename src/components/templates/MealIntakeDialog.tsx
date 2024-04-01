@@ -63,6 +63,33 @@ function MealIntakeDialog({ meal, setMeal }: MealIntakeDialogProps) {
     return null;
   }, [meal]);
 
+  const MoreFoodNeededText = ({ bolusAmount }: { bolusAmount: number }) => (
+    <div className="py-2">
+      Theo muss noch
+      <ul className="pl-4 pb-2">
+        <li>
+          <strong>
+            {Math.ceil(Math.abs(bolusAmount - meal.highBloodSugarAdaption) / 2)}
+          </strong>{" "}
+          Traubenzucker <strong>oder</strong>
+        </li>
+        <li>
+          <strong>
+            {Math.ceil(Math.abs(bolusAmount - meal.highBloodSugarAdaption) / 2)}
+          </strong>{" "}
+          Gummibärchen essen <strong>oder</strong>
+        </li>
+        <li>
+          <strong>
+            {Math.abs(bolusAmount - meal.highBloodSugarAdaption) * 10}
+          </strong>{" "}
+          ml Apfelsaft trinken.
+        </li>
+      </ul>
+      In CamAPS FX muss nichts weiter eingegeben werden.
+    </div>
+  );
+
   return (
     <div className="p-8 flex-1">
       {!meal ? (
@@ -123,23 +150,7 @@ function MealIntakeDialog({ meal, setMeal }: MealIntakeDialogProps) {
                     Ist der Blutzucker höher als 200 mg/dl?
                     <YesNoInput onChange={handleBloodSugarCheck} />
                     {afterMealBolus - meal.highBloodSugarAdaption < 0 ? (
-                      <div>
-                        Theo muss noch{" "}
-                        <span style={{ fontWeight: "bold" }}>
-                          {Math.ceil(
-                            Math.abs(
-                              afterMealBolus - meal.highBloodSugarAdaption,
-                            ) / 2,
-                          )}
-                        </span>{" "}
-                        Traubenzucker oder Gummibärchen essen oder{" "}
-                        <span style={{ fontWeight: "bold" }}>
-                          {Math.abs(
-                              afterMealBolus - meal.highBloodSugarAdaption,
-                            ) * 10
-                          }
-                        </span>{" "} ml Apfelsaft trinken. In CamAPS FX muss nichts weiter eingegeben werden.
-                      </div>
+                      <MoreFoodNeededText bolusAmount={afterMealBolus} />
                     ) : (
                       "Theo muss nichts mehr essen."
                     )}
