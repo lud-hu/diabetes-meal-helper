@@ -102,7 +102,7 @@ function IntakeMeal() {
                 className="flex-1 inline w-24 py-2 px-3 cursor-pointer text-center"
                 selectedClassName="bg-emerald-700 text-white"
               >
-                {m.title + (isIntakeDone(m) ? "✅" : "")}
+                {m.title + (isIntakeDone(m) ? "\u00A0✅" : "")}
               </Tab>
             ))}
           </TabList>
