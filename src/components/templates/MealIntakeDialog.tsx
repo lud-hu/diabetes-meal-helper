@@ -138,7 +138,7 @@ function MealIntakeDialog({ meal, setMeal }: MealIntakeDialogProps) {
                               afterMealBolus - meal.highBloodSugarAdaption,
                             ) * 10
                           }
-                        </span>{" "} ml Apfelsaft trinken.
+                        </span>{" "} ml Apfelsaft trinken. In CamAPS FX muss nichts weiter eingegeben werden.
                       </div>
                     ) : (
                       "Theo muss nichts mehr essen."
