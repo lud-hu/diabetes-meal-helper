@@ -132,7 +132,7 @@ function MealIntakeDialog({ meal, setMeal }: MealIntakeDialogProps) {
                             ) / 2,
                           )}
                         </span>{" "}
-                        Traubenzucker oder Gummibärchen oder{" "}
+                        Traubenzucker oder Gummibärchen essen oder{" "}
                         <span style={{ fontWeight: "bold" }}>
                           {Math.abs(
                               afterMealBolus - meal.highBloodSugarAdaption,
