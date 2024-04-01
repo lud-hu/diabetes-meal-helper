@@ -36,8 +36,7 @@ export const isIntakeDone = (meal: Meal): boolean => {
 
   return (
     (meal.preMealBolusGiven &&
-      meal.afterMealBolusGiven &&
-      meal.mealComponents.every((c) => c.eaten && c.eaten > 0)) ||
+      meal.afterMealBolusGiven) ||
     false
   );
 };
