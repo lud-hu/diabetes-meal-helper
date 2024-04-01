@@ -27,7 +27,7 @@ const emptyMeal: Meal = {
   preMealBolus: 0,
   preMealSnack: 0,
   highBloodSugarAdaption: 0,
-  title: "Mittagessen",
+  title: "Mittagessen"
 };
 
 function Configuration() {
