@@ -12,13 +12,20 @@ import {
 } from "firebase/firestore";
 import { createCollection } from "../firebase";
 
-export interface Meal {
+export interface CarteDuJour {
   id?: string;
+  date: Timestamp;
+  meals: Meal[];
+}
+
+export type MealType = "Frühstück" | "Mittagessen" | "Abendessen";
+
+export interface Meal {
+  title: MealType;
   mealComponents: MealComponent[];
   preMealBolus: number;
   preMealSnack: number;
   highBloodSugarAdaption: number;
-  date: Timestamp;
   preMealBolusGiven?: boolean;
   afterMealBolusGiven?: boolean;
 }
@@ -36,8 +43,8 @@ export interface MealComponent {
  * @param db
  * @returns
  */
-export const getMealForToday = async (db: Firestore) => {
-  const collection = createCollection<Meal>(db, "meals");
+export const getCarteDuJour = async (db: Firestore) => {
+  const collection = createCollection<CarteDuJour>(db, "carteDuJours");
 
   // Start of day
   const startOfDay = new Date();
@@ -58,7 +65,7 @@ export const getMealForToday = async (db: Firestore) => {
     limit(5),
   );
   const docs = await getDocs(mealQuery);
-  const finalDocs: Meal[] = [];
+  const finalDocs: CarteDuJour[] = [];
   docs.docs.forEach((d) =>
     finalDocs.push({
       ...d.data(),
@@ -66,11 +73,11 @@ export const getMealForToday = async (db: Firestore) => {
     }),
   );
 
-  console.log("Found meals: " + finalDocs.length);
+  console.log("Found CarteDuJours: " + finalDocs.length);
 
-  if (finalDocs.length > 1) Promise.reject("Ohje... Zu viel Mahlzeiten!");
+  if (finalDocs.length > 1) Promise.reject("Ohje... Zu viel Tageskarten!");
   if (finalDocs.length == 0)
-    return Promise.reject("Ohje... Keine Mahlzeiten gefunden!");
+    return Promise.reject("Ohje... Keine Tageskarten gefunden!");
 
   return finalDocs[0];
 };
@@ -80,26 +87,26 @@ export const getMealForToday = async (db: Firestore) => {
  * is determined on whether an id is given or not.
  *
  * @param db
- * @param meal
+ * @param carteDuJour
  * @returns
  */
-export const createOrUpdateMeal = async (
+export const createOrUpdateCarteDuJour = async (
   db: Firestore,
-  meal: Partial<Meal>,
+  carteDuJour: Partial<CarteDuJour>,
 ) => {
-  const collection = createCollection<Meal>(db, "meals");
+  const collection = createCollection<CarteDuJour>(db, "carteDuJours");
 
-  if (meal.id) {
-    console.log("Updating " + meal.id);
+  if (carteDuJour.id) {
+    console.log("Updating " + carteDuJour.id);
     // meal existing, perform update
-    return updateDoc(doc(collection, meal.id), {
-      ...meal,
+    return updateDoc(doc(collection, carteDuJour.id), {
+      ...carteDuJour,
       // How to ignore the id field here?
       id: null,
     });
   } else {
-    console.log("Creating new meal");
+    console.log("Creating new CarteDuJour");
     // new meal, perform creation
-    return setDoc(doc(collection), meal);
+    return setDoc(doc(collection), carteDuJour);
   }
 };
