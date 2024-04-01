@@ -1,3 +1,4 @@
+import { useLongPress } from "@uidotdev/usehooks";
 import { Timestamp } from "firebase/firestore";
 import { enqueueSnackbar } from "notistack";
 import { useEffect, useState } from "react";
@@ -27,11 +28,30 @@ const emptyMeal: Meal = {
   preMealBolus: 0,
   preMealSnack: 0,
   highBloodSugarAdaption: 0,
-  title: "Mittagessen"
+  title: "Mittagessen",
 };
 
 function Configuration() {
   const [isLoading, setIsLoading] = useState(true);
+  const longPressAttrs = useLongPress(
+    (e: any) => {
+      if (carteDuJour.meals.length === 1) {
+        enqueueSnackbar("Die letzte Mahlzeit kann nicht gelöscht werden.", {
+          variant: "error",
+        });
+      } else {
+        setCarteDuJour((ms) => {
+          return {
+            ...ms,
+            meals: ms.meals.filter((m) => m.title !== e.target.innerText),
+          };
+        });
+      }
+    },
+    {
+      threshold: 500,
+    },
+  );
 
   const [carteDuJour, setCarteDuJour] = useState<CarteDuJour>({
     date: Timestamp.fromDate(new Date()),
@@ -137,6 +157,7 @@ function Configuration() {
         )}
         {carteDuJour.meals.map((m) => (
           <Tab
+            {...longPressAttrs}
             className="flex-1 inline w-24 py-2 px-3 cursor-pointer text-center"
             selectedClassName="bg-emerald-700 text-white"
           >

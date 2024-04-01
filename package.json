@@ -12,6 +12,7 @@
     "emulator": "firebase emulators:start --only firestore"
   },
   "dependencies": {
+    "@uidotdev/usehooks": "^2.4.1",
     "canvas-confetti": "^1.9.2",
     "firebase": "^10.9.0",
     "localforage": "^1.10.0",
