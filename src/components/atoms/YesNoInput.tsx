@@ -2,10 +2,13 @@ import { useState } from "react";
 
 interface YesNoInputProps {
   onChange: (isBloodSugarHigh: boolean) => void;
+  defaultValue?: boolean;
 }
 
-function YesNoInput({ onChange }: YesNoInputProps) {
-  const [selectedOption, setSelectedOption] = useState("no");
+function YesNoInput({ onChange, defaultValue }: YesNoInputProps) {
+  const [selectedOption, setSelectedOption] = useState(
+    defaultValue === true ? "yes" : "no",
+  );
 
   const handleOnChange = (newState: "yes" | "no") => {
     setSelectedOption(newState);
