@@ -62,7 +62,9 @@ function MealIntakeDialog({ meal, setMeal }: MealIntakeDialogProps) {
         (acc, c) => acc + c.eaten! * c.carbsPerPiece!,
         0,
       );
-      return totalCarbsEaten - meal.preMealBolus;
+      if (totalCarbsEaten > (meal.preMealBolus + meal.preMealSnack)) { return totalCarbsEaten - meal.preMealBolus - meal.preMealSnack; }
+      if (totalCarbsEaten > meal.preMealBolus) { return 0; }
+      else { return totalCarbsEaten - meal.preMealBolus; }
     }
     // If nothing was selected so far, return null
     return null;
