@@ -5,6 +5,8 @@ import Heading from "../../components/molecules/Heading";
 import IntakeMealComponentInput from "../../components/molecules/IntakeMealComponentInput";
 import { Meal, MealComponent } from "../../util/database";
 
+const HIGH_BLOOD_SUGAR_ADAPTATION_VALUE = -2;
+
 interface MealIntakeDialogProps {
   meal: Meal;
   setMeal: (m: Meal) => void; //React.Dispatch<React.SetStateAction<Meal>>;
@@ -39,7 +41,10 @@ function MealIntakeDialog({ meal, setMeal }: MealIntakeDialogProps) {
       if (isBloodSugarHigh) {
         // Blood sugar is higher than 200 mg/dl
         // Decrease afterMealBolus by 2 KH
-        setMeal({ ...meal, highBloodSugarAdaption: -2 });
+        setMeal({
+          ...meal,
+          highBloodSugarAdaption: HIGH_BLOOD_SUGAR_ADAPTATION_VALUE,
+        });
       } else {
         setMeal({ ...meal, highBloodSugarAdaption: 0 });
       }
@@ -148,7 +153,13 @@ function MealIntakeDialog({ meal, setMeal }: MealIntakeDialogProps) {
                 ) : (
                   <div className="w-full">
                     Ist der Blutzucker höher als 200 mg/dl?
-                    <YesNoInput onChange={handleBloodSugarCheck} />
+                    <YesNoInput
+                      onChange={handleBloodSugarCheck}
+                      defaultValue={
+                        meal.highBloodSugarAdaption ===
+                        HIGH_BLOOD_SUGAR_ADAPTATION_VALUE
+                      }
+                    />
                     {afterMealBolus - meal.highBloodSugarAdaption < 0 ? (
                       <MoreFoodNeededText bolusAmount={afterMealBolus} />
                     ) : (
