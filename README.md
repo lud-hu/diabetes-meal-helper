@@ -1,5 +1,8 @@
 # Diabetes Meal Helper
 
+[![Unit tests](https://github.com/lud-hu/diabetes-meal-helper/actions/workflows/unittest.yml/badge.svg)](https://github.com/lud-hu/diabetes-meal-helper/actions/workflows/unittest.yml)
+[![Deploy](https://github.com/lud-hu/diabetes-meal-helper/actions/workflows/firebase-hosting-merge.yml/badge.svg)](https://github.com/lud-hu/diabetes-meal-helper/actions/workflows/firebase-hosting-merge.yml)
+
 description: tbd
 
 ## Setup for local development
