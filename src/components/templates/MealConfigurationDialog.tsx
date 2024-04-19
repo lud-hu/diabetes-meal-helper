@@ -4,6 +4,7 @@ import PreMealBolusInput from "../../components/molecules/PreMealBolusInput";
 import MealComponentInput from "../../components/molecules/mealComponentInput";
 import { Meal, MealComponent } from "../../util/database";
 import { emptyMealComponent } from "../../pages/ConfigureMeal";
+import { calculateSumOfCarbs } from "../../util/calculations";
 
 interface MealConfigurationDialogProps {
   meal: Meal;
@@ -31,17 +32,7 @@ function MealConfigurationDialog({
    * Calculates the total amount carbs for this dish.
    */
   const sumOfCarbs = useMemo(() => {
-    if (
-      meal?.mealComponents.every((c) => typeof c.carbsPerPiece !== "undefined")
-    ) {
-      const totalCarbs = meal.mealComponents.reduce(
-        (acc, c) => acc + c.amount! * c.carbsPerPiece!,
-        0,
-      );
-      return totalCarbs;
-    }
-    // If nothing was selected so far, return null
-    return null;
+    return calculateSumOfCarbs(meal.mealComponents);
   }, [meal]);
 
   return (

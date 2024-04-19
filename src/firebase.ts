@@ -24,8 +24,8 @@ const db = getFirestore(app);
 
 const emulatorHost = "127.0.0.1";
 if (window.location.hostname === "localhost") {
-   console.log("Detected local usage, point to emulators now.");
-   connectFirestoreEmulator(db, emulatorHost, 8080);
+  console.log("Detected local usage, point to emulators now.");
+  connectFirestoreEmulator(db, emulatorHost, 8080);
 }
 
 const createCollection = <T = DocumentData>(

@@ -4,6 +4,7 @@ import YesNoInput from "../../components/atoms/YesNoInput";
 import Heading from "../../components/molecules/Heading";
 import IntakeMealComponentInput from "../../components/molecules/IntakeMealComponentInput";
 import { Meal, MealComponent } from "../../util/database";
+import { calculateAfterMealBolus } from "../../util/calculations";
 
 const HIGH_BLOOD_SUGAR_ADAPTATION_VALUE = -2;
 
@@ -57,17 +58,11 @@ function MealIntakeDialog({ meal, setMeal }: MealIntakeDialogProps) {
    * there can be more reactive calculations be done beforehand).
    */
   const afterMealBolus = useMemo(() => {
-    if (meal?.mealComponents.every((c) => typeof c.eaten !== "undefined")) {
-      const totalCarbsEaten = meal.mealComponents.reduce(
-        (acc, c) => acc + c.eaten! * c.carbsPerPiece!,
-        0,
-      );
-      if (totalCarbsEaten > (meal.preMealBolus + meal.preMealSnack)) { return totalCarbsEaten - meal.preMealBolus - meal.preMealSnack; }
-      if (totalCarbsEaten > meal.preMealBolus) { return 0; }
-      else { return totalCarbsEaten - meal.preMealBolus; }
-    }
-    // If nothing was selected so far, return null
-    return null;
+    return calculateAfterMealBolus(
+      meal?.mealComponents,
+      meal.preMealBolus,
+      meal.preMealSnack,
+    );
   }, [meal]);
 
   const MoreFoodNeededText = ({ bolusAmount }: { bolusAmount: number }) => (

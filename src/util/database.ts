@@ -35,6 +35,7 @@ export interface MealComponent {
   amount?: number;
   carbsPerPiece?: number;
   eaten?: number;
+  type?: "pieces" | "grams";
 }
 
 /**
