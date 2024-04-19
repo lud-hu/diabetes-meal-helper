@@ -13,7 +13,7 @@ describe("Carb Calculations", () => {
   test("sums up more complex carbs", () => {
     expect(
       calculateSumOfCarbs([
-        { amount: 3, carbsPerPiece: 2.5, type: "pieces" },
+        { amount: 3, carbsPerPiece: 3, type: "pieces" },
         { amount: 4, carbsPerPiece: 1.25, type: "pieces" },
       ]),
     ).toBe(12.5);
