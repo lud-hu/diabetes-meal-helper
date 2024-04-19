@@ -160,6 +160,7 @@ function Configuration() {
             {...longPressAttrs}
             className="flex-1 inline w-24 py-2 px-3 cursor-pointer text-center"
             selectedClassName="bg-emerald-700 text-white"
+            key={m.title}
           >
             {m.title}
           </Tab>

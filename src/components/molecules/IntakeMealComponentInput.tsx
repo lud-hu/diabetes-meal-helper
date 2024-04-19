@@ -24,7 +24,8 @@ function IntakeMealComponentInput({
         }
         placeholder="4"
       />
-      von {component.amount} Stk. {component.name} gegessen
+      von {component.amount} {component.type === "grams" ? "gr." : "Stk."}{" "}
+      {component.name} gegessen
     </div>
   );
 }
