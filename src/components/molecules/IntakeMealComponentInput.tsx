@@ -15,6 +15,7 @@ function IntakeMealComponentInput({
       <NumberInput
         min={0}
         max={component.amount}
+        step={0.5}
         value={component.eaten}
         onChange={(e) =>
           updateMealComponent({

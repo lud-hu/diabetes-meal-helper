@@ -7,6 +7,7 @@ interface NumberInputProps {
   max?: number;
   value?: number;
   suffix?: ReactNode;
+  step?: number;
   onChange: (e: number) => void;
 }
 
@@ -15,9 +16,14 @@ function NumberInput(props: NumberInputProps) {
     <div className="flex">
       <button
         className="disabled:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50 rounded-none rounded-l-lg"
-        onClick={() =>
-          props.value !== undefined ? props.onChange(props.value - 1) : {}
-        }
+        onClick={() => {
+          if (props.value === undefined) return;
+          const newValue = props.value - 1;
+          if (props.min !== undefined && newValue < props.min) {
+            return props.onChange(props.min);
+          }
+          return props.onChange(newValue);
+        }}
         disabled={
           props.value !== undefined &&
           props.min !== undefined &&
@@ -32,15 +38,21 @@ function NumberInput(props: NumberInputProps) {
         className="w-20 !rounded-none no-arrows text-center"
         min={props.min}
         max={props.max}
+        step={props.step}
         value={props.value}
-        onChange={(e) => props.onChange(parseInt(e.target.value))}
+        onChange={(e) => props.onChange(parseFloat(e.target.value))}
         suffix={props.suffix}
       />
       <button
         className="disabled:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50  rounded-none rounded-r-lg"
-        onClick={() =>
-          props.value !== undefined ? props.onChange(props.value + 1) : {}
-        }
+        onClick={() => {
+          if (props.value === undefined) return;
+          const newValue = props.value + 1;
+          if (props.max !== undefined && newValue > props.max) {
+            return props.onChange(props.max);
+          }
+          return props.onChange(newValue);
+        }}
         disabled={
           props.value !== undefined &&
           props.max !== undefined &&
