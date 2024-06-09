@@ -28,6 +28,16 @@ function MealConfigurationDialog({
     });
   };
 
+  const deleteMealComponent = (index: number) => {
+    setMeal({
+      ...meal,
+      mealComponents: [
+        ...meal.mealComponents.slice(0, index),
+        ...meal.mealComponents.slice(index + 1),
+      ],
+    });
+  };
+
   /**
    * Calculates the total amount carbs for this dish.
    */
@@ -45,9 +55,13 @@ function MealConfigurationDialog({
         <ol className="mb-4">
           {meal.mealComponents.map((c, i) => (
             <li key={i}>
+              {i + 1}. Bestandteil
               <MealComponentInput
                 component={c}
                 updateMealComponent={(update) => updateMealComponent(i, update)}
+                deleteMealComponent={
+                  i > 0 ? () => deleteMealComponent(i) : undefined
+                }
               />
             </li>
           ))}

@@ -7,11 +7,13 @@ import NumberInput from "../atoms/NumberInput";
 interface MealComponentInputProps {
   component: MealComponent;
   updateMealComponent: (m: MealComponent) => void;
+  deleteMealComponent?: () => void;
 }
 
 function MealComponentInput({
   component,
   updateMealComponent,
+  deleteMealComponent,
 }: MealComponentInputProps) {
   const [type, setType] = useState<MealComponent["type"]>(
     component.type || "pieces",
@@ -44,7 +46,7 @@ function MealComponentInput({
           <option value="grams">Menge</option>
         </select>
       </div>
-      <div className="flex gap-1 items-center pl-4 pb-4 flex-wrap">
+      <div className="flex gap-1 items-center pb-4 flex-wrap">
         <NumberInput
           placeholder="4"
           min={0}
@@ -58,7 +60,7 @@ function MealComponentInput({
             })
           }
         />
-        mit
+        je
         <Input
           type="number"
           placeholder="0.5"
@@ -77,6 +79,19 @@ function MealComponentInput({
           }
           suffix={type === "grams" ? <KhPerGrIcon /> : "KH"}
         />
+        {deleteMealComponent && (
+          <button onClick={deleteMealComponent}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+            >
+              <path d="M0 0h24v24H0z" fill="none" />
+              <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+            </svg>
+          </button>
+        )}
       </div>
     </div>
   );
