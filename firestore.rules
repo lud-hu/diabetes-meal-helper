@@ -2,18 +2,45 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    // read = get & list
+    // write = create & update & delete
 
-    // This rule allows anyone with your Firestore database reference to view, edit,
-    // and delete all data in your Firestore database. It is useful for getting
-    // started, but it is configured to expire after 30 days because it
-    // leaves your app open to attackers. At that time, all client
-    // requests to your Firestore database will be denied.
-    //
-    // Make sure to write security rules for your app before that time, or else
-    // all client requests to your Firestore database will be denied until you Update
-    // your rules
-    match /{document=**} {
-      allow read, write: if request.time < timestamp.date(2024, 6, 14);
+    match /kids/{kidId} {
+        function recipeData() {
+          return get(/databases/$(database)/documents/kids/$(kidId)).data
+        }
+
+      // Only if logged in
+      allow create, read: if request.auth != null;
+      // Only if own kid
+      allow write: if request.auth.uid in recipeData().parents;
+
+      match /carteDuJours/{carteId} {
+
+        function getNewMeals() {
+          return request.resource.data.meals;
+        }
+
+        function getMealDiff(mealIndex) {
+          return getNewMeals()[mealIndex].diff(resource.data.meals[mealIndex]).affectedKeys().hasOnly(['given']);
+        }
+
+        // Allowed publicly
+        allow read: if true;
+
+        // Only allow write if either:
+        // the parent currently wants to modify the carteDuJour, or
+        // the update for the meals only modify the "given" object.
+        // This way, the intake interface does not need any auth.
+        // side note: firestore rules cannot deal with array very nice,
+        // so we have to check each meal individually (but it's a max of 3 right now).
+        allow write: if request.auth.uid in recipeData().parents
+          || (getNewMeals().size() >= 1
+          && getNewMeals().size() <= 3
+          && getMealDiff(0)
+          && (getNewMeals().size() < 2 || getMealDiff(1))
+          && (getNewMeals().size() < 3 || getMealDiff(2)))
+      }
     }
   }
 }

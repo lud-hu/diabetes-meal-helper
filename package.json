@@ -4,12 +4,12 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host=127.0.0.1",
     "build": "tsc && vite build",
     "lint:eslint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:prettier": "prettier 'src/**/*.{js,ts,tsx,jsx,mjs,cjs,json}' --write",
     "preview": "vite preview",
-    "emulator": "firebase emulators:start --only firestore",
+    "emulator": "firebase emulators:start --only firestore,auth",
     "test": "vitest"
   },
   "dependencies": {

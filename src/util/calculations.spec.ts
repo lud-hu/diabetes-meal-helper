@@ -1,5 +1,6 @@
 import { expect, test, describe } from "vitest";
 import { calculateAfterMealBolus, calculateSumOfCarbs } from "./calculations";
+import { Meal } from "./database";
 
 describe("Carb Calculations", () => {
   test("sums up basic carbs", () => {
@@ -54,14 +55,33 @@ describe("Carb Calculations", () => {
   });
 });
 
+const partialMeal: Omit<Meal, "mealComponents"> = {
+  title: "Mittagessen",
+  preMealBolus: 0,
+  preMealSnack: 0,
+  given: {
+    highBloodSugarAdaption: 0,
+  },
+};
+
 describe("Bolus Calculations", () => {
   test("sums up basic carbs", () => {
     expect(
       calculateAfterMealBolus(
-        [
-          { eaten: 1, carbsPerPiece: 1, type: "pieces" },
-          { eaten: 1, carbsPerPiece: 1, type: "pieces" },
-        ],
+        {
+          ...partialMeal,
+          mealComponents: [
+            { carbsPerPiece: 1, type: "pieces", name: "Apfel" },
+            { carbsPerPiece: 1, type: "pieces", name: "Birne" },
+          ],
+          given: {
+            ...partialMeal.given,
+            mealComponentPieces: {
+              Apfel: 1,
+              Birne: 1,
+            },
+          },
+        },
         0,
         0,
       ),
@@ -70,10 +90,20 @@ describe("Bolus Calculations", () => {
   test("sums up basic carbs and subtracts bolus", () => {
     expect(
       calculateAfterMealBolus(
-        [
-          { eaten: 1, carbsPerPiece: 2, type: "pieces" },
-          { eaten: 1, carbsPerPiece: 2, type: "pieces" },
-        ],
+        {
+          ...partialMeal,
+          mealComponents: [
+            { carbsPerPiece: 2, type: "pieces", name: "Apfel" },
+            { carbsPerPiece: 2, type: "pieces", name: "Birne" },
+          ],
+          given: {
+            ...partialMeal.given,
+            mealComponentPieces: {
+              Apfel: 1,
+              Birne: 1,
+            },
+          },
+        },
         1,
         1,
       ),
@@ -82,10 +112,20 @@ describe("Bolus Calculations", () => {
   test("sums up more complex carbs", () => {
     expect(
       calculateAfterMealBolus(
-        [
-          { eaten: 3, carbsPerPiece: 2.5, type: "pieces" },
-          { eaten: 4, carbsPerPiece: 1.25, type: "pieces" },
-        ],
+        {
+          ...partialMeal,
+          mealComponents: [
+            { carbsPerPiece: 2.5, type: "pieces", name: "Apfel" },
+            { carbsPerPiece: 1.25, type: "pieces", name: "Birne" },
+          ],
+          given: {
+            ...partialMeal.given,
+            mealComponentPieces: {
+              Apfel: 3,
+              Birne: 4,
+            },
+          },
+        },
         2,
         0,
       ),
@@ -94,10 +134,20 @@ describe("Bolus Calculations", () => {
   test("sums up correctly if carbsPerPiece is null", () => {
     expect(
       calculateAfterMealBolus(
-        [
-          { eaten: 3, carbsPerPiece: 0, type: "pieces" },
-          { eaten: 2, carbsPerPiece: 2, type: "pieces" },
-        ],
+        {
+          ...partialMeal,
+          mealComponents: [
+            { carbsPerPiece: 0, type: "pieces", name: "Apfel" },
+            { carbsPerPiece: 2, type: "pieces", name: "Birne" },
+          ],
+          given: {
+            ...partialMeal.given,
+            mealComponentPieces: {
+              Apfel: 3,
+              Birne: 2,
+            },
+          },
+        },
         2,
         0,
       ),
@@ -106,10 +156,19 @@ describe("Bolus Calculations", () => {
   test("returns null if at least one MealComponent is not fully configured", () => {
     expect(
       calculateAfterMealBolus(
-        [
-          { eaten: 1, carbsPerPiece: 1, type: "pieces" },
-          { eaten: undefined, carbsPerPiece: 1, type: "pieces" },
-        ],
+        {
+          ...partialMeal,
+          mealComponents: [
+            { carbsPerPiece: 1, type: "pieces", name: "Apfel" },
+            { carbsPerPiece: 1, type: "pieces", name: "Birne" },
+          ],
+          given: {
+            ...partialMeal.given,
+            mealComponentPieces: {
+              Apfel: 1,
+            },
+          },
+        },
         0,
         0,
       ),
@@ -118,7 +177,18 @@ describe("Bolus Calculations", () => {
   test("sums up carbs per grams correctly", () => {
     expect(
       calculateAfterMealBolus(
-        [{ eaten: 100, carbsPerPiece: 0.1, type: "grams" }],
+        {
+          ...partialMeal,
+          mealComponents: [
+            { carbsPerPiece: 0.1, type: "pieces", name: "Apfel" },
+          ],
+          given: {
+            ...partialMeal.given,
+            mealComponentPieces: {
+              Apfel: 100,
+            },
+          },
+        },
         2,
         0,
       ),
@@ -127,10 +197,20 @@ describe("Bolus Calculations", () => {
   test("sums up combination of grams and pieces correctly", () => {
     expect(
       calculateAfterMealBolus(
-        [
-          { eaten: 10, carbsPerPiece: 1, type: "pieces" },
-          { eaten: 100, carbsPerPiece: 0.1, type: "grams" },
-        ],
+        {
+          ...partialMeal,
+          mealComponents: [
+            { carbsPerPiece: 1, type: "pieces", name: "Apfel" },
+            { carbsPerPiece: 0.1, type: "pieces", name: "Birne" },
+          ],
+          given: {
+            ...partialMeal.given,
+            mealComponentPieces: {
+              Apfel: 10,
+              Birne: 100,
+            },
+          },
+        },
         2,
         0,
       ),
@@ -139,7 +219,18 @@ describe("Bolus Calculations", () => {
   test("rounds result properly", () => {
     expect(
       calculateAfterMealBolus(
-        [{ eaten: 3, carbsPerPiece: 1.33, type: "pieces" }],
+        {
+          ...partialMeal,
+          mealComponents: [
+            { carbsPerPiece: 1.33, type: "pieces", name: "Apfel" },
+          ],
+          given: {
+            ...partialMeal.given,
+            mealComponentPieces: {
+              Apfel: 3,
+            },
+          },
+        },
         2,
         0,
       ),
@@ -149,7 +240,16 @@ describe("Bolus Calculations", () => {
   test("returns 0 if eaten more than injected before but not more than injected and snacked before", () => {
     expect(
       calculateAfterMealBolus(
-        [{ eaten: 5, carbsPerPiece: 3, type: "pieces" }],
+        {
+          ...partialMeal,
+          mealComponents: [{ carbsPerPiece: 3, type: "pieces", name: "Apfel" }],
+          given: {
+            ...partialMeal.given,
+            mealComponentPieces: {
+              Apfel: 5,
+            },
+          },
+        },
         10,
         10,
       ),
@@ -159,7 +259,16 @@ describe("Bolus Calculations", () => {
   test("returns carb amount if eaten more than injected and snacked before", () => {
     expect(
       calculateAfterMealBolus(
-        [{ eaten: 5, carbsPerPiece: 3, type: "pieces" }],
+        {
+          ...partialMeal,
+          mealComponents: [{ carbsPerPiece: 3, type: "pieces", name: "Apfel" }],
+          given: {
+            ...partialMeal.given,
+            mealComponentPieces: {
+              Apfel: 5,
+            },
+          },
+        },
         10,
         0,
       ),
@@ -168,7 +277,16 @@ describe("Bolus Calculations", () => {
   test("returns negative carb amount if eaten less than injected before", () => {
     expect(
       calculateAfterMealBolus(
-        [{ eaten: 5, carbsPerPiece: 1, type: "pieces" }],
+        {
+          ...partialMeal,
+          mealComponents: [{ carbsPerPiece: 1, type: "pieces", name: "Apfel" }],
+          given: {
+            ...partialMeal.given,
+            mealComponentPieces: {
+              Apfel: 5,
+            },
+          },
+        },
         10,
         0,
       ),

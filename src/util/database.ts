@@ -25,17 +25,27 @@ export interface Meal {
   mealComponents: MealComponent[];
   preMealBolus: number;
   preMealSnack: number;
-  highBloodSugarAdaption: number;
-  preMealBolusGiven?: boolean;
-  afterMealBolusGiven?: boolean;
+  /** tbd */
+  given: {
+    preMealBolus?: boolean;
+    afterMealBolus?: boolean;
+    /** Amount of eaten pieces for each meal component (same array order as meal.mealComponents) */
+    mealComponentPieces?: Record<string, number>;
+    highBloodSugarAdaption: number;
+  };
 }
 
 export interface MealComponent {
   name?: string;
   amount?: number;
   carbsPerPiece?: number;
-  eaten?: number;
   type?: "pieces" | "grams";
+}
+
+export interface Kid {
+  id?: string;
+  name: string;
+  parents: string[];
 }
 
 /**
@@ -44,8 +54,11 @@ export interface MealComponent {
  * @param db
  * @returns
  */
-export const getCarteDuJour = async (db: Firestore) => {
-  const collection = createCollection<CarteDuJour>(db, "carteDuJours");
+export const getCarteDuJour = async (db: Firestore, kidId: string) => {
+  const collection = createCollection<CarteDuJour>(
+    db,
+    `kids/${kidId}/carteDuJours`,
+  );
 
   // Start of day
   const startOfDay = new Date();
@@ -93,9 +106,13 @@ export const getCarteDuJour = async (db: Firestore) => {
  */
 export const createOrUpdateCarteDuJour = async (
   db: Firestore,
+  kidId: string,
   carteDuJour: Partial<CarteDuJour>,
 ) => {
-  const collection = createCollection<CarteDuJour>(db, "carteDuJours");
+  const collection = createCollection<CarteDuJour>(
+    db,
+    `kids/${kidId}/carteDuJours`,
+  );
 
   if (carteDuJour.id) {
     console.log("Updating " + carteDuJour.id);
@@ -109,5 +126,56 @@ export const createOrUpdateCarteDuJour = async (
     console.log("Creating new CarteDuJour");
     // new meal, perform creation
     return setDoc(doc(collection), carteDuJour);
+  }
+};
+
+/**
+ * Returns the meal for the given day if there is any.
+ *
+ * @param db
+ * @returns
+ */
+export const getKid = async (db: Firestore, userId: string) => {
+  const collection = createCollection<Kid>(db, "kids");
+
+  const kidQuery = query(
+    collection,
+    where("parents", "array-contains", userId),
+    limit(1),
+  );
+  const docs = await getDocs(kidQuery);
+  const finalDocs: Kid[] = [];
+  docs.docs.forEach((d) =>
+    finalDocs.push({
+      ...d.data(),
+      id: d.id,
+    }),
+  );
+
+  if (finalDocs.length > 1) Promise.reject("Ohje... Zu viele Kinder!");
+  if (finalDocs.length == 0)
+    return Promise.reject("Ohje... Kein Kind gefunden!");
+
+  return finalDocs[0];
+};
+
+/**
+ * Creates or updates the given kid in the DB.
+ *
+ * @param db
+ * @param carteDuJour
+ * @returns
+ */
+export const createOrUpdateKid = async (db: Firestore, kid: Partial<Kid>) => {
+  const collection = createCollection<Kid>(db, "kids");
+
+  if (kid.id) {
+    return updateDoc(doc(collection, kid.id), {
+      ...kid,
+      // How to ignore the id field here?
+      id: null,
+    });
+  } else {
+    return setDoc(doc(collection), kid);
   }
 };

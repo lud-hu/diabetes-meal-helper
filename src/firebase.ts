@@ -7,6 +7,12 @@ import {
   connectFirestoreEmulator,
   getFirestore,
 } from "firebase/firestore";
+import {
+  browserLocalPersistence,
+  connectAuthEmulator,
+  getAuth,
+  setPersistence,
+} from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -21,11 +27,15 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth();
+auth.useDeviceLanguage();
+setPersistence(auth, browserLocalPersistence);
 
 const emulatorHost = "127.0.0.1";
-if (window.location.hostname === "localhost") {
+if (window.location.hostname === "127.0.0.1") {
   console.log("Detected local usage, point to emulators now.");
   connectFirestoreEmulator(db, emulatorHost, 8080);
+  connectAuthEmulator(auth, `http://127.0.0.1:9099`);
 }
 
 const createCollection = <T = DocumentData>(
@@ -35,4 +45,4 @@ const createCollection = <T = DocumentData>(
   return collection(firestore, collectionName) as CollectionReference<T>;
 };
 
-export { app, db, createCollection };
+export { app, auth, createCollection, db };

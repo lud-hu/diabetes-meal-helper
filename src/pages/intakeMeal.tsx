@@ -10,15 +10,17 @@ import {
   getCarteDuJour,
 } from "../util/database";
 import { isIntakeDone } from "../util/validators";
+import { useParams } from "react-router-dom";
 
 function IntakeMeal() {
   const [isLoading, setIsLoading] = useState(false);
   const [carteDuJour, setCarteDuJour] = useState<CarteDuJour>();
   const [activeTab, setActiveTab] = useState(0);
+  let { kidId } = useParams();
 
   useEffect(() => {
-    getTodaysMeal();
-  }, []);
+    if (kidId) getTodaysMeal();
+  }, [kidId]);
 
   /**
    * Retrieves the meal for the current day.
@@ -28,7 +30,8 @@ function IntakeMeal() {
     setIsLoading(true);
 
     try {
-      const newCarte = await getCarteDuJour(db);
+      if (!kidId) throw Error("No kidId provided");
+      const newCarte = await getCarteDuJour(db, kidId);
       setCarteDuJour(newCarte);
       // Error thrown if no meal found, just swallow
       // -> we want to have the user create a new one
@@ -58,7 +61,8 @@ function IntakeMeal() {
   const saveCarteDuJour = async (updatedCarteDuJour: CarteDuJour) => {
     setIsLoading(true);
     try {
-      await createOrUpdateCarteDuJour(db, {
+      if (!kidId) throw Error("No kidId provided");
+      await createOrUpdateCarteDuJour(db, kidId, {
         ...updatedCarteDuJour,
         // Filter out placeholder component if present:
         meals: updatedCarteDuJour.meals.map((m) => ({
@@ -89,7 +93,9 @@ function IntakeMeal() {
     <>
       {isLoading && <LoadingSpinner />}
       {!carteDuJour ? (
-        <div>Für Heute wurde noch kein Essen konfiguriert.</div>
+        <div className="flex-1 p-4">
+          Für Heute wurde noch kein Essen konfiguriert.
+        </div>
       ) : (
         <Tabs
           selectedIndex={activeTab}

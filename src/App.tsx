@@ -1,34 +1,44 @@
 import { SnackbarProvider } from "notistack";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "react-tabs/style/react-tabs.css";
 import "./App.css";
 import Footer from "./components/molecules/Footer";
 import Header from "./components/molecules/Header";
 import Configuration from "./pages/ConfigureMeal";
 import IntakeMeal from "./pages/intakeMeal";
-
-const router = createBrowserRouter([
-  {
-    path: "/konfigurieren",
-    element: <Configuration />,
-  },
-  {
-    path: "/einnehmen",
-    element: <IntakeMeal />,
-  },
-  {
-    path: "/",
-    element: <IntakeMeal />,
-  },
-]);
+import Login from "./pages/Login";
+import ProtectedRoute from "./pages/ProtectedRoute";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
     <div className="flex flex-col h-full">
-      <Header />
-      <SnackbarProvider />
-      <RouterProvider router={router} />
-      <Footer />
+      <BrowserRouter>
+        <Header />
+        <SnackbarProvider />
+        <Routes>
+          <Route
+            path="/konfigurieren"
+            element={
+              <ProtectedRoute>
+                <Configuration />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profil"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/einnehmen/:kidId" element={<IntakeMeal />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
+        </Routes>
+        <Footer />
+      </BrowserRouter>
     </div>
   );
 }
