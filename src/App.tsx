@@ -33,10 +33,9 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="/einnehmen" element={<IntakeMeal />} />
+          <Route path="/einnehmen/:kidId" element={<IntakeMeal />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/" element={<IntakeMeal />} />
-          <Route path="/loggedout" element={<div>bye.</div>} />
+          <Route path="/" element={<Login />} />
         </Routes>
         <Footer />
       </BrowserRouter>

@@ -3,12 +3,14 @@ import NumberInput from "../atoms/NumberInput";
 
 interface IntakeMealComponentInputProps {
   component: MealComponent;
-  updateMealComponent: (m: MealComponent) => void;
+  eaten: number;
+  onEatenChange: (eaten: number) => void;
 }
 
 function IntakeMealComponentInput({
   component,
-  updateMealComponent,
+  eaten,
+  onEatenChange,
 }: IntakeMealComponentInputProps) {
   return (
     <div className="flex gap-1 items-center py-2">
@@ -16,13 +18,8 @@ function IntakeMealComponentInput({
         min={0}
         max={component.amount}
         step={0.5}
-        value={component.eaten}
-        onChange={(e) =>
-          updateMealComponent({
-            ...component,
-            eaten: e,
-          })
-        }
+        value={eaten}
+        onChange={(e) => onEatenChange(e)}
         placeholder="4"
       />
       von {component.amount} {component.type === "grams" ? "gr." : "Stk."}{" "}

@@ -8,8 +8,8 @@ function Login() {
 
   // If "forward" query parameter was set, navigate to that path after login.
   const forwardTo = searchParams.get("forward");
-  if (user && !isLoading && forwardTo) {
-    navigate(forwardTo);
+  if (user && !isLoading) {
+    navigate(forwardTo || "/konfigurieren");
   }
 
   return (

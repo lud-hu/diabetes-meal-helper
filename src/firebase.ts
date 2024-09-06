@@ -32,10 +32,10 @@ auth.useDeviceLanguage();
 setPersistence(auth, browserLocalPersistence);
 
 const emulatorHost = "127.0.0.1";
-if (window.location.hostname === "localhost") {
+if (window.location.hostname === "127.0.0.1") {
   console.log("Detected local usage, point to emulators now.");
   connectFirestoreEmulator(db, emulatorHost, 8080);
-  connectAuthEmulator(auth, `http://localhost:9099`);
+  connectAuthEmulator(auth, `http://127.0.0.1:9099`);
 }
 
 const createCollection = <T = DocumentData>(

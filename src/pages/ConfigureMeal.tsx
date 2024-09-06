@@ -8,27 +8,31 @@ import MealConfigurationDialog from "../components/templates/MealConfigurationDi
 import { db } from "../firebase";
 import {
   CarteDuJour,
+  Kid,
   Meal,
   MealComponent,
   MealType,
   createOrUpdateCarteDuJour,
   getCarteDuJour,
+  getKid,
 } from "../util/database";
 import { validateCarteDuJour, validateMealComponent } from "../util/validators";
+import { useAuth } from "../util/useAuth";
 
 export const emptyMealComponent: MealComponent = {
   name: undefined,
   amount: 0,
   carbsPerPiece: undefined,
-  eaten: 0,
 };
 
 const emptyMeal: Meal = {
   mealComponents: [emptyMealComponent],
   preMealBolus: 0,
   preMealSnack: 0,
-  highBloodSugarAdaption: 0,
   title: "Mittagessen",
+  given: {
+    highBloodSugarAdaption: 0,
+  },
 };
 
 function Configuration() {
@@ -63,9 +67,33 @@ function Configuration() {
     ],
   });
 
+  const { user } = useAuth();
+  const [kid, setKid] = useState<Kid | null>(null);
+
   useEffect(() => {
-    getTodaysMeal();
-  }, []);
+    const fetchKid = async () => {
+      if (user?.uid) {
+        try {
+          setKid(await getKid(db, user.uid));
+        } catch {}
+      }
+    };
+
+    fetchKid();
+  }, [user]);
+
+  useEffect(() => {
+    if (kid) {
+      getTodaysMeal();
+    }
+  }, [kid]);
+
+  if (!kid?.id)
+    return (
+      <div className="flex-1 p-4">
+        Bitte erstelle in deinem Profil einen Essensplan für dein Kind.
+      </div>
+    );
 
   /**
    * Saves or updates the given meal to the DB.
@@ -84,7 +112,7 @@ function Configuration() {
     }
 
     try {
-      await createOrUpdateCarteDuJour(db, {
+      await createOrUpdateCarteDuJour(db, kid.id!, {
         ...carteDuJour,
         // Filter out placeholder component if present:
         meals: carteDuJour.meals.map((m) => ({
@@ -110,7 +138,7 @@ function Configuration() {
     setIsLoading(true);
 
     try {
-      setCarteDuJour(await getCarteDuJour(db));
+      setCarteDuJour(await getCarteDuJour(db, kid.id!));
       // Error thrown if no meal found, just swallow
       // -> we want to have the user create a new one
     } finally {

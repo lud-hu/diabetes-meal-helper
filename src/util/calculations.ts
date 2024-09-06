@@ -1,4 +1,4 @@
-import { MealComponent } from "./database";
+import { Meal, MealComponent } from "./database";
 
 const round = (value: number) => Math.round(value * 10) / 10;
 
@@ -25,13 +25,20 @@ export const calculateSumOfCarbs = (mealComponents: MealComponent[]) => {
  * @returns The amount of insulin (in KH) that needs to be injected after the meal. Null if not all components have a eaten amount set yet.
  */
 export const calculateAfterMealBolus = (
-  mealComponents: MealComponent[],
+  meal: Meal,
   preMealBolus: number,
   preMealSnack: number,
 ) => {
-  if (mealComponents.every((c) => typeof c.eaten !== "undefined")) {
-    const totalCarbsEaten = mealComponents.reduce(
-      (acc, c) => acc + c.eaten! * c.carbsPerPiece!,
+  if (
+    meal.mealComponents.every(
+      (c) =>
+        typeof meal.given?.mealComponentPieces?.[c.name || ""] !== "undefined",
+    )
+  ) {
+    const totalCarbsEaten = meal.mealComponents.reduce(
+      (acc, c) =>
+        acc +
+        meal.given?.mealComponentPieces?.[c.name || ""]! * c.carbsPerPiece!,
       0,
     );
     if (totalCarbsEaten > preMealBolus + preMealSnack) {

@@ -24,7 +24,7 @@ export const useAuth = () => {
   const signMeOut = () => {
     signOut(auth).then(() => {
       setUser(null);
-      navigate("/loggedout");
+      navigate("/");
     });
   };
 

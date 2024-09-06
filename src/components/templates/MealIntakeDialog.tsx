@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import YesNoInput from "../../components/atoms/YesNoInput";
 import Heading from "../../components/molecules/Heading";
 import IntakeMealComponentInput from "../../components/molecules/IntakeMealComponentInput";
-import { Meal, MealComponent } from "../../util/database";
+import { Meal } from "../../util/database";
 import { calculateAfterMealBolus } from "../../util/calculations";
 
 const HIGH_BLOOD_SUGAR_ADAPTATION_VALUE = -2;
@@ -16,23 +16,25 @@ interface MealIntakeDialogProps {
 function MealIntakeDialog({ meal, setMeal }: MealIntakeDialogProps) {
   const setPreBolusGiven = async (given: boolean) => {
     if (!meal) return;
-    setMeal({ ...meal, preMealBolusGiven: given });
+    setMeal({ ...meal, given: { ...meal.given, preMealBolus: given } });
   };
 
   const setAfterBolusGiven = async (given: boolean) => {
     if (!meal) return;
-    setMeal({ ...meal, afterMealBolusGiven: given });
+    setMeal({ ...meal, given: { ...meal.given, afterMealBolus: given } });
   };
 
-  const updateMealComponent = (index: number, c: MealComponent) => {
+  const onEatenChange = (name: string, eaten: number) => {
     if (meal) {
       setMeal({
         ...meal,
-        mealComponents: [
-          ...meal.mealComponents.slice(0, index),
-          c,
-          ...meal.mealComponents.slice(index + 1),
-        ],
+        given: {
+          ...meal.given,
+          mealComponentPieces: {
+            ...meal.given?.mealComponentPieces,
+            [name]: eaten,
+          },
+        },
       });
     }
   };
@@ -44,10 +46,19 @@ function MealIntakeDialog({ meal, setMeal }: MealIntakeDialogProps) {
         // Decrease afterMealBolus by 2 KH
         setMeal({
           ...meal,
-          highBloodSugarAdaption: HIGH_BLOOD_SUGAR_ADAPTATION_VALUE,
+          given: {
+            ...meal.given,
+            highBloodSugarAdaption: HIGH_BLOOD_SUGAR_ADAPTATION_VALUE,
+          },
         });
       } else {
-        setMeal({ ...meal, highBloodSugarAdaption: 0 });
+        setMeal({
+          ...meal,
+          given: {
+            ...meal.given,
+            highBloodSugarAdaption: 0,
+          },
+        });
       }
     }
   };
@@ -58,11 +69,7 @@ function MealIntakeDialog({ meal, setMeal }: MealIntakeDialogProps) {
    * there can be more reactive calculations be done beforehand).
    */
   const afterMealBolus = useMemo(() => {
-    return calculateAfterMealBolus(
-      meal?.mealComponents,
-      meal.preMealBolus,
-      meal.preMealSnack,
-    );
+    return calculateAfterMealBolus(meal, meal.preMealBolus, meal.preMealSnack);
   }, [meal]);
 
   const MoreFoodNeededText = ({ bolusAmount }: { bolusAmount: number }) => (
@@ -71,19 +78,23 @@ function MealIntakeDialog({ meal, setMeal }: MealIntakeDialogProps) {
       <ul className="pl-4 pb-2">
         <li>
           <strong>
-            {Math.ceil(Math.abs(bolusAmount - meal.highBloodSugarAdaption) / 2)}
+            {Math.ceil(
+              Math.abs(bolusAmount - meal.given.highBloodSugarAdaption) / 2,
+            )}
           </strong>{" "}
           Traubenzucker <strong>oder</strong>
         </li>
         <li>
           <strong>
-            {Math.ceil(Math.abs(bolusAmount - meal.highBloodSugarAdaption) / 2)}
+            {Math.ceil(
+              Math.abs(bolusAmount - meal.given.highBloodSugarAdaption) / 2,
+            )}
           </strong>{" "}
           Gummibärchen essen <strong>oder</strong>
         </li>
         <li>
           <strong>
-            {Math.abs(bolusAmount - meal.highBloodSugarAdaption) * 10}
+            {Math.abs(bolusAmount - meal.given.highBloodSugarAdaption) * 10}
           </strong>{" "}
           ml Apfelsaft trinken.
         </li>
@@ -95,7 +106,9 @@ function MealIntakeDialog({ meal, setMeal }: MealIntakeDialogProps) {
   return (
     <div className="p-8 flex-1">
       {!meal ? (
-        <div>Für Heute wurde noch kein Essen konfiguriert.</div>
+        <div className="flex-1 p-4">
+          Für Heute wurde noch kein Essen konfiguriert.
+        </div>
       ) : (
         <>
           <section className="mb-24">
@@ -118,8 +131,10 @@ function MealIntakeDialog({ meal, setMeal }: MealIntakeDialogProps) {
                   KH als Snack eingeben (Menü - Mahlzeit eingeben - Snack).
                 </div>
               </div>
-              <button onClick={() => setPreBolusGiven(!meal.preMealBolusGiven)}>
-                {meal.preMealBolusGiven ? "Erledigt ✅" : "Erledigt?"}
+              <button
+                onClick={() => setPreBolusGiven(!meal.given?.preMealBolus)}
+              >
+                {meal.given?.preMealBolus ? "Erledigt ✅" : "Erledigt?"}
               </button>
             </div>
           </section>
@@ -131,10 +146,15 @@ function MealIntakeDialog({ meal, setMeal }: MealIntakeDialogProps) {
             <ol className="mb-3">
               {meal.mealComponents.map((c, i) => (
                 <li key={i}>
-                  <IntakeMealComponentInput
-                    component={c}
-                    updateMealComponent={(u) => updateMealComponent(i, u)}
-                  />
+                  {c.name && (
+                    <IntakeMealComponentInput
+                      component={c}
+                      eaten={
+                        meal.given?.mealComponentPieces?.[c.name || ""] || 0
+                      }
+                      onEatenChange={(u) => onEatenChange(c.name || "", u)}
+                    />
+                  )}
                 </li>
               ))}
             </ol>
@@ -153,11 +173,11 @@ function MealIntakeDialog({ meal, setMeal }: MealIntakeDialogProps) {
                     <YesNoInput
                       onChange={handleBloodSugarCheck}
                       defaultValue={
-                        meal.highBloodSugarAdaption ===
+                        meal.given.highBloodSugarAdaption ===
                         HIGH_BLOOD_SUGAR_ADAPTATION_VALUE
                       }
                     />
-                    {afterMealBolus - meal.highBloodSugarAdaption < 0 ? (
+                    {afterMealBolus - meal.given.highBloodSugarAdaption < 0 ? (
                       <MoreFoodNeededText bolusAmount={afterMealBolus} />
                     ) : (
                       "Theo muss nichts mehr essen."
@@ -167,17 +187,17 @@ function MealIntakeDialog({ meal, setMeal }: MealIntakeDialogProps) {
                 <div className="w-full text-center">
                   <button
                     onClick={() => {
-                      if (!meal.afterMealBolusGiven) {
+                      if (!meal.given?.afterMealBolus) {
                         confetti({
                           particleCount: 100,
                           spread: 70,
                           origin: { y: 0.6 },
                         });
                       }
-                      setAfterBolusGiven(!meal.afterMealBolusGiven);
+                      setAfterBolusGiven(!meal.given?.afterMealBolus);
                     }}
                   >
-                    {meal.afterMealBolusGiven ? "Erledigt ✅" : "Erledigt?"}
+                    {meal.given?.afterMealBolus ? "Erledigt ✅" : "Erledigt?"}
                   </button>
                 </div>
               </div>

@@ -34,9 +34,5 @@ export const validateMealComponent = (
 export const isIntakeDone = (meal: Meal): boolean => {
   if (!meal) return false;
 
-  return (
-    (meal.preMealBolusGiven &&
-      meal.afterMealBolusGiven) ||
-    false
-  );
+  return (meal.given?.preMealBolus && meal.given?.afterMealBolus) || false;
 };
